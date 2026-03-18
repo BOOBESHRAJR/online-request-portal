@@ -61,6 +61,16 @@ foreach ($queries as $query) {
     }
 }
 
+// Step 4: Ensure uploads directory exists
+$uploads_dir = __DIR__ . '/uploads';
+if (!is_dir($uploads_dir)) {
+    @mkdir($uploads_dir, 0755, true);
+}
+$message_uploads_dir = $uploads_dir . '/messages';
+if (!is_dir($message_uploads_dir)) {
+    @mkdir($message_uploads_dir, 0755, true);
+}
+
 $conn->close();
 
 // Display Results

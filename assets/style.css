@@ -470,6 +470,73 @@ h6 {
     transition: var(--transition);
 }
 
+/* Search UI */
+.search-section {
+    margin-top: 28px;
+}
+
+.search-panel {
+    background: var(--surface);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-2);
+    padding: 22px;
+}
+
+.search-panel h2 {
+    margin-bottom: 12px;
+    color: var(--ink);
+    font-size: 22px;
+}
+
+.search-form {
+    display: flex;
+    justify-content: center;
+}
+
+.search-input-wrap {
+    width: 100%;
+    max-width: 720px;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 15px;
+    pointer-events: none;
+}
+
+.search-input-wrap input[type="text"] {
+    width: 100%;
+    height: 46px;
+    border: 1px solid rgba(15, 23, 42, 0.14);
+    border-radius: 999px;
+    padding: 0 128px 0 40px;
+    font-size: 14px;
+    background: #ffffff;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.07);
+}
+
+.search-input-wrap input[type="text"]:focus {
+    outline: none;
+    border-color: rgba(11, 114, 133, 0.65);
+    box-shadow: 0 0 0 4px rgba(11, 114, 133, 0.12), 0 8px 18px rgba(15, 23, 42, 0.07);
+}
+
+.search-input-wrap .btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 999px;
+}
+
 /* Status Badge */
 .status-badge {
     padding: 6px 12px;
