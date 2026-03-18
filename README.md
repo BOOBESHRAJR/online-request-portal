@@ -1,221 +1,141 @@
-# Online Information Request Portal - Setup Guide
+# Online Information Request Portal
 
-## System Overview
-A complete PHP-based application with user and admin roles for submitting and managing information requests.
+## Overview
+A PHP and MySQL web application for submitting, reviewing, and tracking information requests. The system supports separate user and admin flows, request attachments, admin replies, in-app request conversations, notifications, analytics, and CSV reporting.
 
-## Requirements
-- XAMPP or similar PHP/MySQL environment
-- PHP 7.0+
-- MySQL 5.7+
-- Modern web browser
+## Current Features
 
-## Installation Steps
+### User features
+- User registration and login
+- Dashboard with request statistics for total, pending, approved, and rejected requests
+- Submit new requests with title, description, and category
+- Upload multiple supporting documents with each request
+- View request history with search and pagination
+- Download previously uploaded supporting documents
+- Open a request conversation thread and exchange messages with admin
+- Upload message attachments in request conversations
+- View admin replies directly from the request list
+- Receive notification records when requests are submitted or updated
 
-### 1. Database Setup
-1. Open phpMyAdmin at `http://localhost/phpmyadmin`
-2. Create a new database named `online_request_portal`
-3. Select the new database
-4. Go to the SQL tab and paste the contents of `db/schema.sql`
-5. Click "Go" to execute the SQL script
-
-**Default Test Accounts (passwords are hashed in DB):**
-- **Admin**: Email: `admin@portal.com` | Password: `admin123`
-- **User**: Email: `user@example.com` | Password: `user123`
-
-### 2. File Location
-Place all files in: `C:\xampp\htdocs\online_request_portal\`
-
-### 3. Access the Application
-Open your browser and go to:
-```
-http://localhost/online_request_portal/
-```
+### Admin features
+- Admin-only login and role-based access control
+- Dashboard with total, pending, and completed request counts
+- Status analytics and requests-per-department/category chart
+- Review pending requests and approve or reject them
+- Search pending and processed requests
+- View attached documents submitted with requests
+- Send admin replies tied to a request
+- Open request chat threads with users
+- Export request data as CSV
+- View all registered users and roles
 
 ## Project Structure
-```
+```text
 online_request_portal/
-├── config/
-│   └── database.php          # Database configuration
-├── db/
-│   └── schema.sql            # Database schema and sample data
-├── user/
-│   ├── login.php             # User login
-│   ├── dashboard.php         # User dashboard
-│   ├── submit_request.php    # Submit new request
-│   ├── view_status.php       # View request status
-│   └── logout.php            # User logout
-├── admin/
-│   ├── login.php             # Admin login
-│   ├── dashboard.php         # Admin dashboard
-│   ├── view_requests.php     # New pending requests (approve/reject)
-│   ├── approved_rejected.php # Processed requests
-│   └── logout.php            # Admin logout
-├── assets/
-│   ├── style.css             # Styling
-│   └── script.js             # JavaScript (if needed)
-├── index.php                 # Home page
-├── register.php              # User registration
-└── README.md                 # This file
+|-- admin/
+|   |-- approved_rejected.php
+|   |-- dashboard.php
+|   |-- export_report.php
+|   |-- login.php
+|   |-- logout.php
+|   `-- view_requests.php
+|-- assets/
+|   `-- style.css
+|-- config/
+|   `-- database.php
+|-- db/
+|   `-- schema.sql
+|-- uploads/
+|   `-- messages/
+|-- user/
+|   |-- dashboard.php
+|   |-- login.php
+|   |-- logout.php
+|   |-- submit_request.php
+|   `-- view_status.php
+|-- document_download.php
+|-- index.php
+|-- login.php
+|-- message_attachment_download.php
+|-- register.php
+|-- request_messages.php
+|-- setup.php
+`-- README.md
 ```
 
-## Features
+## Tech Stack
+- PHP with MySQLi
+- MySQL
+- HTML, CSS, and vanilla JavaScript
+- Session-based authentication
 
-### User Module
-1. **Registration** (register.php)
-   - Create new account with name, email, password, and phone
-   - Passwords are securely hashed using password_hash()
-   - Email validation and unique email checks
+## Database Tables
+The schema in `db/schema.sql` currently includes:
 
-2. **Login** (user/login.php)
-   - Secure login with email and password
-   - Session-based authentication
+- `users`
+- `requests`
+- `documents`
+- `notifications`
+- `messages`
 
-3. **Dashboard** (user/dashboard.php)
-   - Quick access to submit requests
-   - Quick access to view requests status
+The `requests` table also stores `admin_reply` for direct staff feedback on a request.
 
-4. **Submit Request** (user/submit_request.php)
-   - Form fields: Title, Details, Category
-   - Auto-populated fields: user_id, register_id, submitted_at, status='Pending'
-   - Success popup with options (submit another, view requests, return to dashboard)
+## Local Setup
 
-5. **View Requests** (user/view_status.php)
-   - Display all requests submitted by logged-in user
-   - Show: Title, Details, Category, Submitted Date/Time, Status
-   - Status colors: Orange (Pending), Green (Approved), Red (Rejected)
+### Requirements
+- XAMPP or another PHP + MySQL environment
+- PHP 7.4+ recommended
+- MySQL 5.7+ or MariaDB equivalent
 
-### Admin Module
-1. **Admin Login** (admin/login.php)
-   - Secure login for administrators only
-   - Role-based access control
+### Installation
+1. Copy the project into your web root, for example `C:\xampp\htdocs\online_request_portal`.
+2. Create a MySQL database named `online_request_portal`.
+3. Import `db/schema.sql`.
+4. Update `config/database.php` if your local database credentials differ.
+5. Make sure the `uploads/` directory is writable by PHP.
+6. Open `http://localhost/online_request_portal/`.
 
-2. **Admin Dashboard** (admin/dashboard.php)
-   - Display count of pending requests
-   - Display count of processed requests
-   - Quick navigation cards
+### Optional setup helper
+You can also run `setup.php` once to create the database objects and upload folders in a local XAMPP-style setup.
 
-3. **New Requests** (admin/view_requests.php)
-   - Display only pending requests
-   - Show: Serial #, Name, Email, Phone, Title, Details, Category, Submitted Date/Time
-   - Action buttons: Approve / Reject
-   - Auto-remove processed requests from this view
+## Main Workflows
 
-4. **Processed Requests** (admin/approved_rejected.php)
-   - Display approved and rejected requests
-   - Show: Serial #, Name, Email, Title, Details, Submitted Date/Time, Status
-   - Status colors: Green (Approved), Red (Rejected)
+### User flow
+1. Register an account.
+2. Sign in from the user portal.
+3. Submit a request, optionally with supporting files.
+4. Track request progress from the status page.
+5. Open the request conversation page to read updates or send a message.
+6. Download attached documents when needed.
 
-## Database Schema
+### Admin flow
+1. Sign in from the admin portal.
+2. Review pending requests.
+3. Approve or reject a request.
+4. Send replies or continue the request conversation.
+5. Review processed requests and export reports.
 
-### Users Table
-```
-id (INT, PRIMARY KEY, AUTO_INCREMENT)
-name (VARCHAR 100)
-email (VARCHAR 100, UNIQUE)
-password (VARCHAR 255)
-phone (VARCHAR 20)
-role (ENUM: 'user', 'admin')
-created_at (TIMESTAMP)
-```
+## File Upload Support
 
-### Requests Table
-```
-id (INT, PRIMARY KEY, AUTO_INCREMENT)
-user_id (INT, FOREIGN KEY)
-register_id (INT)
-title (VARCHAR 255)
-details (TEXT)
-category (VARCHAR 50)
-submitted_at (DATETIME)
-status (VARCHAR 20: 'Pending', 'Approved', 'Rejected')
-```
+### Request documents
+- Multiple files allowed
+- Accepted formats: `pdf`, `docx`, `jpg`, `jpeg`, `png`
+- Maximum size: 5 MB per file
 
-## Security Features
-- ✅ Passwords hashed using `password_hash()` with bcrypt
-- ✅ Passwords verified using `password_verify()`
-- ✅ MySQLi prepared statements to prevent SQL injection
-- ✅ Session-based authentication
-- ✅ Role-based access control (user/admin)
-- ✅ Users can only view their own requests
-- ✅ Input validation and sanitization
-- ✅ Output escaping with `htmlspecialchars()`
+### Message attachments
+- Accepted formats: `pdf`, `docx`, `jpg`, `jpeg`, `png`
+- Maximum size: 5 MB per file
 
-## User Flow
+## Security Notes
+- Passwords are hashed with `password_hash()`
+- Passwords are checked with `password_verify()`
+- Most database writes use prepared statements
+- Sessions are used for authentication and role checks
+- Users can access only their own requests and request files
+- Uploaded files are renamed before storage
+- Output is escaped with `htmlspecialchars()` in views
 
-### User Path
-1. User → Opens `index.php`
-2. User → Clicks "Register" → Fills `register.php`
-3. User → Redirected to `user/login.php`
-4. User → Enters credentials → Dashboard (`user/dashboard.php`)
-5. User → Can submit request via `user/submit_request.php`
-6. User → Can view request status via `user/view_status.php`
-
-### Admin Path
-1. Admin → Opens `admin/login.php`
-2. Admin → Enters credentials → Dashboard (`admin/dashboard.php`)
-3. Admin → Views new requests via `admin/view_requests.php`
-4. Admin → Approves/Rejects requests
-5. Admin → Views processed requests via `admin/approved_rejected.php`
-
-## Testing
-
-### Test User Registration
-1. Go to `http://localhost/online_request_portal/register.php`
-2. Fill in details and register
-3. Login with credentials
-4. Submit a request
-5. View request status (will show "Pending")
-
-### Test Admin Functionality
-1. Go to `http://localhost/online_request_portal/admin/login.php`
-2. Login with: `admin@portal.com` / `admin123`
-3. View new pending requests
-4. Approve or reject requests
-5. Verify they appear in processed requests
-
-### Test User Viewing Updates
-1. Login as user
-2. Go to "View Requests"
-3. Should see updated status after admin action
-
-## Customization
-
-### Database Connection
-Edit `config/database.php` to change:
-- Server name
-- Username
-- Password
-- Database name
-
-### Styling
-Modify `assets/style.css` to customize appearance
-
-### Request Categories
-Edit the category dropdown in `user/submit_request.php`
-
-## Troubleshooting
-
-**Database Connection Error**
-- Verify MySQL is running
-- Check credentials in `config/database.php`
-- Ensure database `online_request_portal` exists
-
-**SQL Errors**
-- Make sure `db/schema.sql` was executed completely
-- Check PhpMyAdmin for any error messages
-
-**Session Issues**
-- Clear browser cookies
-- Ensure PHP session.save_path is writable
-- Check session timeout settings
-
-## Additional Notes
-- Passwords in the sample accounts are hashed versions of `admin123` and `user123`
-- The system uses MySQLi for database operations
-- All dates and times use DATETIME format
-- The application is responsive and mobile-friendly
-
----
-**Created**: February 2026
-**Version**: 1.0
-**Status**: Complete and Ready for Deployment
+## Notes
+- `setup.php`, `debug.php`, and `delete_sample_accounts.php` are utility scripts and should not be exposed in production.
+- The app stores uploaded request documents in `uploads/` and chat attachments in `uploads/messages/`.
+- If you deploy this project to a cloud host, persistent storage is required for the upload directories.
