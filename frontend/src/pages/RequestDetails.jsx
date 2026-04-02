@@ -210,7 +210,7 @@ const RequestDetails = () => {
                           const hasLegacyPath = !!doc.path;
                           const docUrl = hasLegacyPath 
                             ? (doc.path.startsWith('http') ? doc.path : `/${doc.path}`)
-                            : `${import.meta.env.VITE_API_URL || '/api'}/requests/${request._id}/document/${doc._id}?token=${user.token}`;
+                            : `${api.defaults.baseURL}/requests/${request._id}/document/${doc._id}?token=${user.token}`;
                           
                           const docType = doc.contentType || doc.mimetype;
                           const isImage = docType ? docType.startsWith('image/') : /\.(jpg|jpeg|png|gif|webp)$/i.test(doc.filename);
@@ -316,19 +316,27 @@ const RequestDetails = () => {
                                   }`}>
                                       {msg.message && <p className="text-[15px] font-medium leading-relaxed whitespace-pre-wrap">{msg.message}</p>}
                                       {msg.attachment && (() => {
-                                          const hasLegacyMsgPath = !!msg.attachment.path;
-                                          const msgAttachUrl = hasLegacyMsgPath 
+                                          let msgAttachUrl = hasLegacyMsgPath 
                                               ? (msg.attachment.path.startsWith('http') ? msg.attachment.path : `/${msg.attachment.path}`)
-                                              : `${import.meta.env.VITE_API_URL || '/api'}/messages/attachment/${msg._id}?token=${user.token}`;
+                                              : `${api.defaults.baseURL}/messages/attachment/${msg._id}?token=${user.token}`;
                                               
                                           const msgAttachType = msg.attachment.contentType || msg.attachment.mimetype;
                                           const msgIsImage = msgAttachType ? msgAttachType.startsWith('image/') : /\.(jpg|jpeg|png|gif|webp)$/i.test(msg.attachment.filename);
 
                                           return (
-                                              <div className={`mt-3 ${msg.message ? (isMe ? 'border-t border-indigo-400/30 pt-3' : 'border-t border-slate-100 pt-3') : ''}`}>
+                                              <div className={`mt-3 ${msg.message ? (isMe ? 'border-t border-white/20 pt-3' : 'border-t border-slate-100 pt-3') : ''}`}>
                                                   {msgIsImage ? (
-                                                      <div className="rounded-xl overflow-hidden shadow-sm hover:opacity-90 transition-opacity border border-black/5 bg-black/5">
-                                                          <img onClick={() => window.open(msgAttachUrl, '_blank')} src={msgAttachUrl} alt="attachment" className="max-h-60 w-auto object-cover cursor-pointer" />
+                                                      <div className="rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all border-4 border-white/10 bg-white/5 group-hover:scale-[1.02] duration-300">
+                                                          <img 
+                                                            onClick={() => window.open(msgAttachUrl, '_blank')} 
+                                                            src={msgAttachUrl} 
+                                                            alt="Attachment" 
+                                                            className="max-h-80 w-full object-cover cursor-pointer hover:brightness-110 transition-all"
+                                                            onError={(e) => {
+                                                              e.target.onerror = null; 
+                                                              e.target.src = 'https://placehold.co/400x300?text=Image+Unavailable';
+                                                            }}
+                                                          />
                                                       </div>
                                                   ) : (
                                                       <a href={msgAttachUrl} target="_blank" className={`flex items-center gap-3 p-3 rounded-xl border transition-all shadow-sm ${isMe ? 'bg-indigo-700/50 border-indigo-500 hover:bg-indigo-700' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`}>
