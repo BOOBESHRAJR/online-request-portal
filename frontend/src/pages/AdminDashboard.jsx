@@ -111,8 +111,8 @@ const AdminDashboard = () => {
             <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-[10px] mb-1">
                <ShieldCheck size={14} /> Administrative Control
             </div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight">System Oversight</h1>
-            <p className="text-slate-500 font-medium">Monitor and manage all system activity from your command center.</p>
+            <h1 className="text-4xl font-black text-white tracking-tight">System Oversight</h1>
+            <p className="text-slate-300 font-medium">Monitor and manage all system activity from your command center.</p>
           </div>
         </div>
           
