@@ -11,46 +11,33 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
-  const menuItems = user?.role === 'admin' ? [
+  const menuItems = [
     { 
-      label: 'Admin Overview', 
-      path: '/admin', 
+      label: 'Dashboard', 
+      path: user?.role === 'admin' ? '/admin' : '/dashboard', 
       icon: LayoutDashboard 
     },
     { 
-      label: 'All Requests', 
-      path: '/admin', // Could be separate in future, for now main admin view
-      icon: List 
-    },
-    {
-      label: 'Settings',
-      path: '/settings',
-      icon: Settings
-    }
-  ] : [
-    { 
-      label: 'User Dashboard', 
-      path: '/dashboard', 
-      icon: LayoutDashboard 
-    },
-    { 
-      label: 'Submit Request', 
+      label: 'Create Request', 
       path: '/create-request', 
-      icon: PlusCircle 
+      icon: PlusCircle,
+      role: 'user'
     },
     { 
       label: 'My Requests', 
-      path: '/dashboard', 
-      icon: Mail 
+      path: '/dashboard', // Using dashboard as summary for now
+      icon: Mail,
+      role: 'user'
     },
-    {
-      label: 'Settings',
-      path: '/settings',
-      icon: Settings
+    { 
+      label: 'Admin Panel', 
+      path: '/admin', 
+      icon: ShieldAlert,
+      role: 'admin'
     }
   ];
 
-  const filteredItems = menuItems; // Already filtered by logic above
+  const filteredItems = menuItems.filter(item => !item.role || item.role === user?.role);
 
   return (
     <>
