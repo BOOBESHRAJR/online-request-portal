@@ -1,0 +1,13 @@
+{
+  "name": "online-request-portal",
+  "version": "1.0.0",
+  "description": "Root configuration for automated Render deployment",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "postinstall": "npm install --prefix backend",
+    "build": "npm run build --prefix backend",
+    "start": "npm start --prefix backend"
+  }
+}
