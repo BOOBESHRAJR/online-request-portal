@@ -1,94 +1,67 @@
 # Online Information Request Portal
 
+## 🚀 Live Demo
+- **Frontend (Vercel)**: [https://online-request-portal.vercel.app](https://online-request-portal.vercel.app)
+- **Backend (Render)**: [https://online-request-portal.onrender.com](https://online-request-portal.onrender.com)
+
 ## Overview
-A modern, responsive MERN-stack web application designed for submitting, reviewing, and tracking information requests. The system supports separate user and admin flows, direct database-hosted document attachments, an admin review queue, a real-time messaging interface, protected routing, and robust analytics.
+A high-performance, real-time MERN-stack SaaS dashboard designed for handling information requests, support tickets, and secure document sharing. This project has been modernized with a premium "Glassmorphism" UI, automatic live-syncing, and a robust binary-to-buffer file storage architecture.
 
-## Tech Stack
-- **Frontend**: React (Vite), Tailwind CSS, Axios, Context API
-- **Backend**: Node.js, Express.js
+## 🛠 Tech Stack
+- **Frontend**: React 18 (Vite), Tailwind CSS, Framer Motion (Animations), Lucide Icons
+- **Backend**: Node.js, Express.js (REST API)
 - **Database**: MongoDB (Mongoose ODM)
-- **File Storage**: MongoDB (stored as binary data/Buffers)
-- **Authentication**: JSON Web Tokens (JWT) & bcryptjs for password hashing
+- **Security**: JWT (JSON Web Tokens), Bcrypt.js, CORS Protection
+- **Hosting**: Render (Backend & API), Vercel (Frontend & Static Assets)
 
-## Main Features
+## ✨ Modern Features
 
-### User Experience
-- **Secure Registration/Login**: Managed via JWT authentication.
-- **Dynamic Dashboard**: Includes statistical breakdown of total, pending, approved, and rejected requests.
-- **Request Creation**: Users can submit well-categorized requests with a description and up to 5 multi-format documents constraints.
-- **Secure Storage**: Uploaded files are immediately processed and saved as binary data in MongoDB.
-- **Request Status**: History table for tracking progress in real-time.
+### 🔄 Real-Time "Live Sync" (New!)
+- **Near-Live Chat**: Support conversations refresh every 3 seconds for a seamless messaging experience.
+- **Auto-Updating Dashboards**: Your stats and request queue refresh every 15 seconds automatically.
+- **Smart Retries**: Automatic connection handling for Render "Cold Starts" — if the server is asleep, the app waits and retries until connected.
 
-### Admin Experience
-- **Privileged Access**: Only valid admins can access the admin-only routes.
-- **Advanced Dashboard**: Features complete visibility of all system-wide request counts.
-- **Data Review**: Admins can approve or reject tickets.
-- **Documents Preview**: Seamless access to MongoDB-hosted items attached by applicants.
+### 📁 Advanced File Architecture
+- **No Third-Party Bloat**: Removed Cloudinary to simplify architecture. Files are now stored directly in **MongoDB as binary Buffers**.
+- **Secure Stream Proxy**: Documents are served through a secure backend proxy with token-gated access.
+- **Instant Preview**: Built-in support for image previews and document downloads.
 
-## Project Structure
-```text
-online_request_portal/
-|-- backend/
-|   |-- config/       # MongoDB Connection
-|   |-- controllers/  # API Logic
-|   |-- middleware/   # Authentication & Multer configs
-|   |-- models/       # Mongoose Schemas (User, Request, Notification, Message)
-|   |-- routes/       # Express Router instances
-|   |-- server.js     # Entry point
-|   `-- package.json
-|-- frontend/
-|   |-- src/
-|   |   |-- components/ # Navbar, ProtectedRoutes
-|   |   |-- context/    # User Auth Context
-|   |   |-- pages/      # Login, Register, Dashboards, Create Request
-|   |   |-- services/   # Axios instancing
-|   |   |-- App.jsx     # Main React routes
-|   |   `-- main.jsx
-|   |-- tailwind.config.js
-|   `-- vite.config.js
-|-- README.md
+### 🎨 Premium UI/UX
+- **App-Like Feel**: Split-screen layouts with independent scrolling for request details and chat.
+- **Glassmorphism**: Modern frosted-glass components with fluid animations.
+- **Mobile Responsive**: Fully optimized for desktop, tablet, and mobile screens.
+
+## ⚙️ Environment Variables
+
+### Backend (`/backend/.env`)
+```env
+PORT=5000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_random_key
+FRONTEND_URL=https://your-vercel-domain.app
 ```
 
-## Setup & Local Development
-
-### Requirements
-- Node.js (v16+)
-- MongoDB locally installed or a MongoDB Atlas account
-
-### Installation
-
-1. Copy the project repository to your desired path.
-2. Initialize **Backend**:
-   ```bash
-   cd backend
-   npm install
-   ```
-3. Initialize **Frontend**:
-   ```bash
-   cd frontend
-   npm install
-   ```
-4. Create an environment file at `backend/.env` containing:
-   ```env
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/online_request_portal
-   JWT_SECRET=your_super_secret_jwt_key
-   NODE_ENV=development
-   ```
-
-### Running Locally
-
-To launch the backend API:
-```bash
-cd backend
-npm run dev
+### Frontend (Vercel Settings)
+```env
+VITE_API_URL=https://your-render-service.onrender.com/api
 ```
 
-To launch the Vite frontend UI:
-```bash
-cd frontend
-npm run dev
-```
+## 🚀 Deployment Guide
 
-## Deployment Info
-This structure is ready for cloud deployment. The backend `package.json` contains a unified `build` script (`npm install --prefix ../frontend && npm run build --prefix ../frontend`) allowing platforms like Render to build both stacks simultaneously and serve the static files dynamically through the Node instance in production.
+### Phase 1: Backend (Render)
+1. Link your GitHub to Render as a **Web Service**.
+2. **Build Command**: `npm install`
+3. **Start Command**: `npm start`
+4. Add the `MONGO_URI`, `JWT_SECRET`, and `FRONTEND_URL` environment variables.
+
+### Phase 2: Frontend (Vercel)
+1. Import your Repo and select the `frontend/` folder as the **Root Directory**.
+2. Add the `VITE_API_URL` environment variable.
+3. Deploy!
+
+## 🔧 Local Setup
+1. Clone the repository.
+2. Run `npm install` in both `backend/` and `frontend/` folders.
+3. Start the backend: `cd backend && npm run dev`.
+4. Start the frontend: `cd frontend && npm run dev`.
+5. Access the app at `http://localhost:5173`.
