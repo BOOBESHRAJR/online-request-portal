@@ -4,16 +4,16 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { 
-  Paperclip, Send, File, Image as ImageIcon, Download, 
+  Paperclip, Send, File, Download, 
   Loader2, MessageCircle, CheckCircle2, XCircle, Clock, 
-  ArrowLeft, User, Calendar, ShieldCheck, FileText, Search
+  ArrowLeft, User, Calendar, ShieldCheck, FileText, Eye,
+  Activity, Info
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const RequestDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
-  const navigate = useNavigate();
   
   const [request, setRequest] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -95,392 +95,300 @@ const RequestDetails = () => {
 
   if (!request) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
-      <Loader2 className="animate-spin text-blue-600 mb-4" size={32} />
+      <Loader2 className="animate-spin text-indigo-600 mb-4" size={32} />
       <p className="text-slate-500 font-medium">Loading details...</p>
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500 pb-10">
-      {/* Header / Breadcrumbs */}
-      <div className="flex items-center justify-between px-2">
-        <Link to={user?.role === 'admin' ? "/admin" : "/dashboard"} className="group inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-slate-400 hover:text-blue-600 transition-all">
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-          Back to Portal
+    <div className="max-w-[1500px] mx-auto h-[calc(100vh-6rem)] flex flex-col animate-in fade-in duration-500 pb-4">
+      {/* Header */}
+      <div className="flex items-center justify-between px-2 mb-4 shrink-0">
+        <Link to={user?.role === 'admin' ? "/admin" : "/dashboard"} className="group flex items-center gap-3 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+          <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shadow-sm border border-slate-200 group-hover:border-indigo-200 transition-colors">
+              <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /> 
+          </div>
+          Back to Dashboard
         </Link>
-        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-300">
-           Server Status: <span className="text-emerald-500">Online</span>
+        <div className="flex items-center gap-2.5 bg-white px-3 py-1.5 rounded-full border border-slate-200 shadow-sm">
+           <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+           <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Secure Live Connection</span>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Detail Sidebar - Modern Card UI */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-2xl p-8 space-y-8 animate-in slide-in-from-left-6 duration-700">
-            
-            {/* Request Header Info */}
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                 <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-100 shadow-sm">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 h-full min-h-0">
+        
+        {/* LEFT SIDEBAR: Details */}
+        <div className="lg:col-span-4 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden h-full">
+          <div className="p-6 bg-slate-50/80 border-b border-slate-100 shrink-0">
+             <div className="flex justify-between items-start mb-4">
+                 <div className="px-3 py-1.5 bg-indigo-50 text-indigo-700 text-[10px] font-black uppercase tracking-widest rounded-lg border border-indigo-100">
                    {request.category}
-                 </span>
-                 <span className="text-[10px] text-slate-400 font-black uppercase tracking-tighter">
-                   #{request._id.slice(-8).toUpperCase()}
-                 </span>
-              </div>
-              <h2 className="text-2xl font-black text-slate-900 leading-tight mb-4">
-                {request.title}
-              </h2>
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2 text-slate-500">
-                   <Calendar size={14} className="text-slate-300" />
-                   <span className="text-[11px] font-bold">
-                     {new Date(request.createdAt).toLocaleDateString([], { month: 'short', day: 'numeric' })}
-                   </span>
-                </div>
-                <div className="flex items-center gap-2 text-slate-500">
-                   <Clock size={14} className="text-slate-300" />
-                   <span className="text-[11px] font-bold">
-                     {new Date(request.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                   </span>
-                </div>
-              </div>
-            </div>
+                 </div>
+                 <span className="text-[11px] font-bold text-slate-400 font-mono tracking-wider">#{request._id.slice(-6).toUpperCase()}</span>
+             </div>
+             <h2 className="text-2xl font-extrabold text-slate-900 leading-tight mb-4">
+               {request.title}
+             </h2>
+             <div className="flex items-center gap-5 text-xs font-bold text-slate-500">
+               <div className="flex items-center gap-1.5"><Calendar size={14} className="text-slate-400" /> {new Date(request.createdAt).toLocaleDateString()}</div>
+               <div className="flex items-center gap-1.5"><Clock size={14} className="text-slate-400" /> {new Date(request.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+             </div>
+          </div>
 
-            {/* Status Section */}
-            <div className="pt-8 border-t border-slate-50 space-y-4">
-               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 ml-1">
-                 <CheckCircle2 size={12} className="text-blue-500" /> Live Processing Status
-               </h3>
-               <AnimatePresence mode="wait">
-                 <motion.div 
-                   key={request.status}
-                   initial={{ scale: 0.9, opacity: 0 }}
-                   animate={{ scale: 1, opacity: 1 }}
-                   transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                   className={`
-                     p-5 rounded-2xl flex items-center justify-between border-2 shadow-inner transition-all duration-500
-                     ${request.status === 'approved' ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 
-                       request.status === 'rejected' ? 'bg-rose-50 border-rose-100 text-rose-700' : 
-                       'bg-amber-50 border-amber-100 text-amber-700'}
-                   `}
-                 >
-                   <div className="flex items-center gap-4">
-                      <div className="w-11 h-11 rounded-xl bg-white shadow-sm flex items-center justify-center">
-                         {request.status === 'approved' ? <CheckCircle2 size={24} className="text-emerald-600" /> : 
-                          request.status === 'rejected' ? <XCircle size={24} className="text-rose-600" /> : 
-                          <Clock size={24} className="text-amber-600" />}
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+              {/* Status */}
+              <div className="space-y-3">
+                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <Activity size={14} /> Current Status
+                  </h3>
+                  <motion.div 
+                      key={request.status}
+                      initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                      className={`p-4 rounded-2xl border-2 flex items-center justify-between ${
+                          request.status === 'approved' ? 'bg-emerald-50 border-emerald-100 text-emerald-800' :
+                          request.status === 'rejected' ? 'bg-rose-50 border-rose-100 text-rose-800' :
+                          'bg-amber-50 border-amber-100 text-amber-800'
+                      }`}
+                  >
+                      <div className="flex items-center gap-4">
+                          <div className="bg-white p-2.5 rounded-xl shadow-sm">
+                              {request.status === 'approved' ? <CheckCircle2 size={24} className="text-emerald-600" /> : 
+                               request.status === 'rejected' ? <XCircle size={24} className="text-rose-600" /> : 
+                               <Clock size={24} className="text-amber-600" />}
+                          </div>
+                          <div>
+                              <p className="text-sm font-black uppercase tracking-wider">{request.status}</p>
+                              <p className="text-[10px] font-bold opacity-60">Status synced automatically</p>
+                          </div>
+                      </div>
+                  </motion.div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-3">
+                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <Info size={14} /> Request Narrative
+                  </h3>
+                  <div className="p-6 rounded-2xl bg-slate-50 border border-slate-100 text-[14px] font-medium text-slate-700 leading-relaxed whitespace-pre-wrap">
+                      {request.description}
+                  </div>
+              </div>
+
+              {/* Requester */}
+              <div className="space-y-3">
+                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <User size={14} /> Submitted By
+                  </h3>
+                  <div className="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-white shadow-sm hover:border-indigo-100 transition-colors">
+                      <div className="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 text-white rounded-[14px] flex items-center justify-center font-bold text-lg shadow-inner">
+                          {request.user?.name?.charAt(0)}
                       </div>
                       <div>
-                         <p className="text-[10px] font-black uppercase tracking-widest leading-none mb-1.5">{request.status}</p>
-                         <p className="text-[9px] font-bold opacity-60 leading-none">Last sync: moments ago</p>
+                          <p className="font-extrabold text-slate-900 leading-tight">{request.user?.name}</p>
+                          <p className="text-xs font-semibold text-slate-500">{request.user?.email}</p>
                       </div>
-                   </div>
-                 </motion.div>
-               </AnimatePresence>
-            </div>
-
-            {/* Description */}
-            <div className="pt-8 border-t border-slate-50 space-y-4">
-               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 ml-1">
-                 <File size={12} className="text-blue-500" /> Request Narrative
-               </h3>
-               <p className="text-slate-700 text-[14px] leading-relaxed font-semibold bg-slate-50/50 p-6 rounded-2xl border border-slate-100/30 whitespace-pre-wrap shadow-inner min-h-[120px]">
-                 {request.description}
-               </p>
-            </div>
-
-            {/* Requester Info */}
-            <div className="pt-8 border-t border-slate-50">
-               <div className="flex items-center gap-4 group cursor-help">
-                  <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-600 font-black text-sm border-2 border-white shadow-xl group-hover:bg-blue-600 group-hover:text-white transition-all duration-500">
-                    {request.user?.name?.charAt(0)}
                   </div>
-                  <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">Submitted By</p>
-                    <p className="font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors">{request.user?.name}</p>
-                  </div>
-               </div>
-            </div>
+              </div>
 
-            {/* Attachments Section - High-Performance File Gallery */}
-            {request.documents?.length > 0 && (
-              <div className="pt-8 border-t border-slate-50 space-y-4">
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 ml-1">
-                   <Paperclip size={12} className="text-blue-500" /> Request Archive
-                </h3>
-                <div className="grid grid-cols-1 gap-4">
-                  {request.documents.map((doc, i) => {
-                    const hasLegacyPath = !!doc.path;
-                    const docUrl = hasLegacyPath 
-                      ? (doc.path.startsWith('http') ? doc.path : `/${doc.path}`)
-                      : `${import.meta.env.VITE_API_URL || '/api'}/requests/${request._id}/document/${doc._id}?token=${user.token}`;
-                    
-                    const docType = doc.contentType || doc.mimetype;
-                    const isImage = docType ? docType.startsWith('image/') : /\.(jpg|jpeg|png|gif|webp)$/i.test(doc.filename);
-                    
-                    return (
-                      <div key={i} className="group bg-white border-2 border-slate-50 rounded-2xl p-4 flex items-center justify-between hover:shadow-2xl hover:border-blue-500/10 transition-all duration-500">
-                        <div className="flex items-center gap-4 overflow-hidden">
-                           <div className="w-16 h-16 rounded-xl bg-slate-50 border-2 border-slate-100 overflow-hidden flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-500 shadow-sm">
-                              {isImage ? (
-                                <img src={docUrl} alt="prev" className="w-full h-full object-cover" />
-                              ) : (
-                                <FileText size={20} className="text-slate-400" />
-                              )}
-                           </div>
-                           <div className="overflow-hidden">
-                              <p className="text-sm font-black text-slate-900 truncate leading-none mb-1.5">{doc.filename}</p>
-                              <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none">
-                                {isImage ? 'Image Asset' : 'Document File'}
-                              </p>
-                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                           <a 
-                             href={docUrl} 
-                             target="_blank" 
-                             rel="noreferrer"
-                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90"
-                             title="View File"
-                           >
-                              <Search size={16} />
-                           </a>
-                           <a 
-                             href={docUrl} 
-                             download
-                             className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-90 border border-transparent hover:border-blue-400"
-                             title="Download"
-                           >
-                              <Download size={16} />
-                           </a>
-                        </div>
+              {/* Attachments */}
+              {request.documents?.length > 0 && (
+              <div className="space-y-3">
+                  <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                      <Paperclip size={14} /> Attached Documents
+                  </h3>
+                  <div className="grid grid-cols-1 gap-3">
+                      {request.documents.map((doc, i) => {
+                          const hasLegacyPath = !!doc.path;
+                          const docUrl = hasLegacyPath 
+                            ? (doc.path.startsWith('http') ? doc.path : `/${doc.path}`)
+                            : `${import.meta.env.VITE_API_URL || '/api'}/requests/${request._id}/document/${doc._id}?token=${user.token}`;
+                          
+                          const docType = doc.contentType || doc.mimetype;
+                          const isImage = docType ? docType.startsWith('image/') : /\.(jpg|jpeg|png|gif|webp)$/i.test(doc.filename);
+                          
+                          return (
+                              <div key={i} className="flex items-center justify-between p-3.5 rounded-2xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-indigo-200 hover:shadow-md transition-all group">
+                                  <div className="flex items-center gap-4 overflow-hidden">
+                                      <div className="w-12 h-12 rounded-xl bg-white border border-slate-100 flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                                          {isImage ? <img src={docUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"/> : <FileText size={20} className="text-slate-400" />}
+                                      </div>
+                                      <div className="overflow-hidden">
+                                          <p className="text-sm font-bold text-slate-800 truncate leading-tight mb-1">{doc.filename}</p>
+                                          <p className="text-[10px] uppercase font-black tracking-widest text-slate-400">{isImage ? 'Image Asset' : 'Document'}</p>
+                                      </div>
+                                  </div>
+                                  <div className="flex items-center gap-2 shrink-0">
+                                      <a href={docUrl} target="_blank" className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-500 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-100 transition-colors shadow-sm"><Eye size={14}/></a>
+                                      <a href={docUrl} download className="w-9 h-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-100 transition-colors shadow-sm"><Download size={14}/></a>
+                                  </div>
+                              </div>
+                          )
+                      })}
+                  </div>
+              </div>
+              )}
+
+              {/* Admin section */}
+              {user?.role === 'admin' && (
+                  <div className="space-y-4 pt-6 mt-4 border-t-2 border-dashed border-slate-200">
+                      <h3 className="text-[11px] font-black text-indigo-500 uppercase tracking-widest flex items-center gap-2">
+                          <ShieldCheck size={14} /> Admin Controls
+                      </h3>
+                      <div className="space-y-4 p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl">
+                          <textarea
+                              value={adminReply}
+                              onChange={e => setAdminReply(e.target.value)}
+                              placeholder="Add secure admin note or resolution details..."
+                              rows="3"
+                              className="w-full p-4 rounded-xl bg-white border border-indigo-100 shadow-sm text-sm font-medium focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400 outline-none resize-none transition-all"
+                          />
+                          <div className="grid grid-cols-2 gap-3">
+                              <button
+                                  onClick={() => updateStatus('approved')} disabled={statusLoading}
+                                  className="py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 disabled:opacity-50 transition-all active:scale-95"
+                              >
+                                  {statusLoading ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle2 size={18} />} Approve
+                              </button>
+                              <button
+                                  onClick={() => updateStatus('rejected')} disabled={statusLoading}
+                                  className="py-3.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-lg shadow-rose-500/30 flex items-center justify-center gap-2 disabled:opacity-50 transition-all active:scale-95"
+                              >
+                                  {statusLoading ? <Loader2 size={16} className="animate-spin" /> : <XCircle size={18} />} Reject
+                              </button>
+                          </div>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Admin Management Panel */}
-            {user?.role === 'admin' && (
-              <div className="pt-8 border-t border-slate-50 space-y-4">
-                <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-2 ml-1">
-                   <ShieldCheck size={12} className="text-indigo-500" /> Admin Oversight
-                </h3>
-                
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Decision Note / Private Reply</label>
-                  <textarea 
-                    rows="3"
-                    value={adminReply}
-                    onChange={(e) => setAdminReply(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-medium focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all outline-none resize-none leading-relaxed"
-                    placeholder="Enter approval details, rejection reasons, or internal notes..."
-                  ></textarea>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                   <button 
-                     onClick={() => updateStatus('approved')}
-                     disabled={statusLoading}
-                     className="flex flex-col items-center justify-center py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl transition-all shadow-xl shadow-emerald-600/25 border-b-4 border-emerald-800 active:border-b-0 active:translate-y-1 disabled:opacity-50"
-                   >
-                     {statusLoading ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle2 size={24} className="mb-1" />}
-                     <span className="text-[10px] font-black uppercase tracking-widest">Save & Approve</span>
-                   </button>
-                   <button 
-                     onClick={() => updateStatus('rejected')}
-                     disabled={statusLoading}
-                     className="flex flex-col items-center justify-center py-4 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl transition-all shadow-xl shadow-rose-600/25 border-b-4 border-rose-800 active:border-b-0 active:translate-y-1 disabled:opacity-50"
-                   >
-                     {statusLoading ? <Loader2 size={18} className="animate-spin" /> : <Clock size={24} className="mb-1" />}
-                     <span className="text-[10px] font-black uppercase tracking-widest">Save & Reject</span>
-                   </button>
-                </div>
-              </div>
-            )}
+                  </div>
+              )}
           </div>
         </div>
 
-        {/* Messaging Area - Professional Interface */}
-        <div className="lg:col-span-8 flex flex-col h-[750px] bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden relative">
-          
-          {/* Chat Header */}
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white/80 backdrop-blur-md z-10 sticky top-0">
-            <div className="flex items-center gap-4">
-              <div className="w-11 h-11 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm">
-                <MessageCircle size={24} />
+        {/* RIGHT SIDEBAR: Chat */}
+        <div className="lg:col-span-8 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col h-full overflow-hidden">
+           {/* Chat header */}
+           <div className="px-6 py-4 bg-white border-b border-slate-100 shrink-0 flex items-center gap-4 relative z-10 shadow-[0_4px_20px_-15px_rgba(0,0,0,0.1)]">
+              <div className="w-11 h-11 rounded-[14px] bg-gradient-to-b from-indigo-50 to-white border border-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 shadow-sm">
+                  <MessageCircle size={22} className="fill-indigo-100/50" />
               </div>
               <div>
-                <h2 className="font-extrabold text-slate-900 text-lg leading-tight">Support Chat</h2>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Connected</span>
-                </div>
+                  <h2 className="font-extrabold text-slate-900 text-lg leading-tight mb-0.5">Support Chat</h2>
+                  <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Agents typically reply in minutes</p>
               </div>
-            </div>
-          </div>
+           </div>
 
-          {/* Chat Messages Area */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#F9FAFB] custom-scrollbar scroll-smooth">
-            {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center py-20 animate-in fade-in zoom-in-95 duration-700">
-                <div className="w-24 h-24 bg-white rounded-[2.5rem] border border-blue-50 shadow-xl shadow-blue-500/5 flex items-center justify-center mb-8 rotate-6 hover:rotate-0 transition-all duration-500 group">
-                  <MessageCircle size={44} className="text-blue-100 group-hover:text-blue-500 transition-colors" />
-                </div>
-                <div className="text-center max-w-sm px-10">
-                   <h3 className="text-slate-900 font-black text-2xl mb-2 tracking-tight">Need assistance?</h3>
-                   <p className="text-slate-400 text-sm font-medium leading-relaxed">
-                     Our support team is ready to help. Send a message below to start a conversation regarding this request.
-                   </p>
-                </div>
+           {/* Messages */}
+           <div className="flex-1 overflow-y-auto p-6 bg-[#F8FAFC]/50 custom-scrollbar flex flex-col gap-6 relative">
+              {/* Background watermark icon */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.02]">
+                <MessageCircle size={240} />
               </div>
-            ) : (
-              messages.map((msg, index) => {
-                const isMe = msg.sender._id === user?._id;
-                const formattedTime = new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                return (
-                  <div key={msg._id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-4 duration-500`}>
-                    {/* Sender Name */}
-                    <span className={`text-[11px] font-black uppercase tracking-widest text-slate-400 mb-1.5 px-1 ${isMe ? 'text-right' : 'text-left'}`}>
-                      {isMe ? 'You' : msg.sender.name}
-                    </span>
-                    
-                    <div className={`relative max-w-[70%] group`}>
-                      <div className={`
-                        px-5 py-3.5 shadow-sm transition-all duration-300
-                        ${isMe 
-                          ? 'bg-[#3B82F6] text-white rounded-2xl rounded-tr-sm' 
-                          : 'bg-[#E5E7EB] text-[#111827] rounded-2xl rounded-tl-sm'
-                        }
-                      `}>
-                        {msg.message && <p className="text-[15px] leading-relaxed font-medium whitespace-pre-wrap">{msg.message}</p>}
-                        
-                        {msg.attachment && (() => {
-                          const hasLegacyMsgPath = !!msg.attachment.path;
-                          const msgAttachUrl = hasLegacyMsgPath 
-                             ? (msg.attachment.path.startsWith('http') ? msg.attachment.path : `/${msg.attachment.path}`)
-                             : `${import.meta.env.VITE_API_URL || '/api'}/messages/attachment/${msg._id}?token=${user.token}`;
-                             
-                          const msgAttachType = msg.attachment.contentType || msg.attachment.mimetype;
-                          const msgIsImage = msgAttachType ? msgAttachType.startsWith('image/') : /\.(jpg|jpeg|png|gif|webp)$/i.test(msg.attachment.filename);
 
-                          return (
-                          <div className={`mt-3 ${msg.message ? 'pt-3 border-t border-black/5' : ''}`}>
-                             {msgIsImage ? (
-                               <div className="rounded-xl overflow-hidden border border-black/5 bg-white/10 mb-1.5 cursor-pointer hover:opacity-95 transition-opacity"
-                                    onClick={() => window.open(msgAttachUrl, '_blank')}>
-                                 <img 
-                                   src={msgAttachUrl} 
-                                   alt="attachment" 
-                                   className="max-h-72 w-full object-cover"
-                                 />
-                                 <div className="p-3 flex items-center justify-between text-[11px] font-bold">
-                                     <span className="truncate opacity-80">{msg.attachment.filename}</span>
-                                     <Download size={14} className="shrink-0" />
-                                 </div>
-                               </div>
-                             ) : (
-                               <a 
-                                 href={msgAttachUrl} 
-                                 target="_blank" 
-                                 rel="noreferrer"
-                                 className={`flex items-center gap-4 p-3 rounded-xl border transition-all ${isMe ? 'bg-white/10 border-white/10 hover:bg-white/20' : 'bg-white/50 border-slate-300 hover:bg-white'}`}
-                               >
-                                 <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${isMe ? 'bg-white/20' : 'bg-white shadow-sm'}`}>
-                                   <File size={20} className={isMe ? 'text-white' : 'text-slate-600'} />
-                                 </div>
-                                 <div className="overflow-hidden flex-1">
-                                   <p className={`text-xs font-bold truncate ${isMe ? 'text-white' : 'text-slate-900'}`}>{msg.attachment.filename}</p>
-                                   <p className={`text-[10px] font-black uppercase opacity-60 tracking-tighter ${isMe ? 'text-blue-100' : 'text-slate-500'}`}>Shared File</p>
-                                 </div>
-                                 <Download size={16} className="shrink-0 opacity-40" />
-                               </a>
-                             )}
-                          </div>
-                          );
-                        })()}
+              {messages.length === 0 ? (
+                  <div className="m-auto text-center max-w-sm relative z-10">
+                      <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-slate-200/50 border border-slate-100 animate-in zoom-in duration-500">
+                          <MessageCircle size={32} className="text-indigo-400" />
                       </div>
-                      
-                      {/* Timestamp outside bubble as requested */}
-                      <div className={`flex items-center gap-1.5 mt-1.5 px-1 ${isMe ? 'justify-end' : 'justify-start'}`}>
-                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                           {formattedTime}
-                         </span>
-                         {isMe && <CheckCircle2 size={10} className="text-blue-500" />}
-                      </div>
-                    </div>
+                      <h3 className="text-2xl font-black text-slate-800 mb-2 tracking-tight">Need assistance?</h3>
+                      <p className="text-sm font-medium text-slate-500 leading-relaxed">Send a message below to start the conversation with our support team or attach files if you need to provide additional context.</p>
                   </div>
-                );
-              })
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+              ) : (
+                  messages.map((msg, index) => {
+                      const isMe = msg.sender._id === user?._id;
+                      const msgTime = new Date(msg.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                      
+                      return (
+                          <div key={msg._id} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 relative z-10`}>
+                              <div className={`flex items-center gap-2 mb-1.5 px-1 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                                  <span className="text-[11px] font-extrabold text-slate-600">{isMe ? 'You' : msg.sender.name}</span>
+                                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{msgTime}</span>
+                              </div>
+                              <div className={`relative max-w-[85%] md:max-w-[70%] group flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                                  <div className={`p-4 shadow-sm ${
+                                      isMe ? 'bg-indigo-600 text-white rounded-[1.5rem] rounded-tr-md' : 'bg-white border border-slate-200/60 text-slate-800 rounded-[1.5rem] rounded-tl-md shadow-slate-200/50'
+                                  }`}>
+                                      {msg.message && <p className="text-[15px] font-medium leading-relaxed whitespace-pre-wrap">{msg.message}</p>}
+                                      {msg.attachment && (() => {
+                                          const hasLegacyMsgPath = !!msg.attachment.path;
+                                          const msgAttachUrl = hasLegacyMsgPath 
+                                              ? (msg.attachment.path.startsWith('http') ? msg.attachment.path : `/${msg.attachment.path}`)
+                                              : `${import.meta.env.VITE_API_URL || '/api'}/messages/attachment/${msg._id}?token=${user.token}`;
+                                              
+                                          const msgAttachType = msg.attachment.contentType || msg.attachment.mimetype;
+                                          const msgIsImage = msgAttachType ? msgAttachType.startsWith('image/') : /\.(jpg|jpeg|png|gif|webp)$/i.test(msg.attachment.filename);
 
-          {/* Chat Footer / Input area */}
-          <div className="p-6 bg-white border-t border-slate-100 shadow-[0_-10px_20px_-10px_rgba(0,0,0,0.03)] z-10">
-            {attachment && (
-              <div className="bg-blue-50/90 border border-blue-100 px-5 py-3 rounded-2xl mb-5 flex items-center justify-between animate-in slide-in-from-bottom-6 duration-300">
-                <div className="flex items-center gap-4 overflow-hidden">
-                   <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-blue-600 shadow-sm border border-blue-100/50">
-                       <Paperclip size={20} />
-                   </div>
-                   <div>
-                       <p className="text-sm font-bold text-blue-900 truncate max-w-[250px]">{attachment.name}</p>
-                       <p className="text-[10px] uppercase font-black text-blue-400 tracking-widest leading-none mt-1">Ready for upload</p>
-                   </div>
-                </div>
-                <button 
-                  onClick={() => setAttachment(null)} 
-                  className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-blue-200/50 text-blue-700 transition-colors shadow-sm"
-                >
-                    <XCircle size={20} />
-                </button>
-              </div>
-            )}
-            
-            <form onSubmit={handleMessageSubmit} className="flex items-end gap-3 max-w-6xl mx-auto">
-              {/* Attach Button */}
-              <label className={`
-                flex-shrink-0 w-14 h-14 rounded-2xl border-2 flex items-center justify-center cursor-pointer transition-all duration-300 active:scale-95
-                ${attachment 
-                  ? 'bg-blue-600 border-blue-600 text-white shadow-xl shadow-blue-600/20' 
-                  : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-blue-500 hover:text-blue-600 hover:bg-white shadow-sm'
-                }
-              `}>
-                <input type="file" className="hidden" onChange={(e) => setAttachment(e.target.files[0])} />
-                <Paperclip size={22} className={attachment ? 'rotate-45 transition-transform duration-500' : ''} />
-              </label>
-              
-              {/* Textarea */}
-              <div className="flex-1 relative group">
-                <textarea 
-                  rows="1"
-                  value={newMessage}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleMessageSubmit();
-                      }
-                  }}
-                  className="w-full bg-slate-50 border-2 border-slate-50 rounded-2xl px-6 py-4 text-[15px] font-medium placeholder:text-slate-400 outline-none focus:bg-white focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all max-h-40 resize-none shadow-sm group-hover:bg-slate-100/50"
-                  placeholder="Type your message here..."
-                />
-              </div>
-              
-              {/* Send Button */}
-              <button 
-                type="submit"
-                disabled={sendingMsg || (!newMessage.trim() && !attachment)}
-                className="flex-shrink-0 w-14 h-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-all duration-300 shadow-xl shadow-blue-600/25 active:scale-90 disabled:opacity-50 disabled:shadow-none"
-              >
-                {sendingMsg ? <Loader2 size={24} className="animate-spin" /> : <Send size={24} className="ml-0.5" />}
-              </button>
-            </form>
-          </div>
+                                          return (
+                                              <div className={`mt-3 ${msg.message ? (isMe ? 'border-t border-indigo-400/30 pt-3' : 'border-t border-slate-100 pt-3') : ''}`}>
+                                                  {msgIsImage ? (
+                                                      <div className="rounded-xl overflow-hidden shadow-sm hover:opacity-90 transition-opacity border border-black/5 bg-black/5">
+                                                          <img onClick={() => window.open(msgAttachUrl, '_blank')} src={msgAttachUrl} alt="attachment" className="max-h-60 w-auto object-cover cursor-pointer" />
+                                                      </div>
+                                                  ) : (
+                                                      <a href={msgAttachUrl} target="_blank" className={`flex items-center gap-3 p-3 rounded-xl border transition-all shadow-sm ${isMe ? 'bg-indigo-700/50 border-indigo-500 hover:bg-indigo-700' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`}>
+                                                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isMe ? 'bg-white/20' : 'bg-white border border-slate-200 shadow-sm'}`}>
+                                                              <File size={20} className={isMe ? 'text-white' : 'text-slate-500'} />
+                                                          </div>
+                                                          <div className="overflow-hidden min-w-[120px]">
+                                                              <p className={`text-sm font-bold truncate ${isMe ? 'text-white' : 'text-slate-800'}`}>{msg.attachment.filename}</p>
+                                                              <p className={`text-[10px] uppercase font-bold tracking-widest mt-0.5 ${isMe ? 'text-indigo-200' : 'text-slate-400'}`}>Document attached</p>
+                                                          </div>
+                                                          <Download size={16} className={`shrink-0 ${isMe ? 'opacity-50 text-white' : 'text-slate-400'}`} />
+                                                      </a>
+                                                  )}
+                                              </div>
+                                          )
+                                      })()}
+                                  </div>
+                              </div>
+                          </div>
+                      )
+                  })
+              )}
+              <div ref={messagesEndRef} />
+           </div>
+
+           {/* Input Area */}
+           <div className="p-4 bg-white border-t border-slate-100 shrink-0 relative z-10 shadow-[0_-4px_20px_-15px_rgba(0,0,0,0.05)]">
+              {attachment && (
+                  <div className="mb-4 inline-flex items-center gap-3 bg-indigo-50 border border-indigo-100 pl-4 pr-2 py-2 rounded-xl animate-in slide-in-from-bottom-2 duration-300">
+                      <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                        <Paperclip size={14} className="text-indigo-500"/>
+                      </div>
+                      <div>
+                        <span className="block text-sm font-bold text-slate-800 truncate max-w-[200px] leading-tight">{attachment.name}</span>
+                        <span className="block text-[9px] uppercase font-black text-indigo-400 tracking-widest mt-0.5">Attached</span>
+                      </div>
+                      <button onClick={() => setAttachment(null)} className="ml-2 w-8 h-8 flex items-center justify-center hover:bg-indigo-100 rounded-lg text-indigo-500 transition-colors"><XCircle size={18}/></button>
+                  </div>
+              )}
+              <form onSubmit={handleMessageSubmit} className="flex items-end gap-3 max-w-5xl mx-auto">
+                  <label className={`shrink-0 w-12 h-12 rounded-[14px] flex items-center justify-center cursor-pointer transition-all border shadow-sm ${
+                      attachment ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-400 hover:text-indigo-500 hover:border-indigo-200 hover:bg-slate-50'
+                  }`}>
+                      <input type="file" className="hidden" onChange={e => setAttachment(e.target.files[0])} />
+                      <Paperclip size={20} className={attachment ? 'rotate-45 transition-transform' : ''} />
+                  </label>
+                  <textarea 
+                      rows="1"
+                      value={newMessage}
+                      onChange={e => setNewMessage(e.target.value)}
+                      onKeyDown={e => {
+                          if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleMessageSubmit(); }
+                      }}
+                      placeholder="Type your message here..."
+                      className="flex-1 bg-slate-50 resize-none rounded-[14px] px-5 py-3.5 text-[15px] outline-none max-h-32 text-slate-800 font-medium placeholder:font-medium placeholder:text-slate-400 focus:bg-white focus:ring-4 focus:ring-indigo-500/10 border border-slate-200 focus:border-indigo-300 transition-all shadow-sm"
+                  />
+                  <button 
+                      type="submit"
+                      disabled={sendingMsg || (!newMessage.trim() && !attachment)}
+                      className="shrink-0 w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[14px] flex items-center justify-center disabled:opacity-50 disabled:shadow-none transition-all shadow-lg shadow-indigo-500/25 active:scale-90"
+                  >
+                      {sendingMsg ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} className="ml-1" />}
+                  </button>
+              </form>
+           </div>
         </div>
       </div>
     </div>

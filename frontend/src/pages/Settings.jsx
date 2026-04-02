@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { User, Mail, Phone, Lock, Save, Shield, UserCircle, KeyRound, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { User, Mail, Phone, Lock, Save, Shield, UserCircle, KeyRound, CheckCircle2, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const Settings = () => {
@@ -64,9 +65,17 @@ const Settings = () => {
 
   return (
     <div className="max-w-4xl mx-auto pb-20 animate-in fade-in duration-500">
-      <div className="mb-10 space-y-2 text-center">
-        <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Account Settings</h1>
-        <p className="text-slate-500 font-medium">Manage your personal information and security preferences.</p>
+      <div className="mb-10 space-y-4">
+        <Link to={user?.role === 'admin' ? "/admin" : "/dashboard"} className="group inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">
+          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm border border-slate-200 group-hover:border-indigo-200 transition-colors">
+              <ArrowLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" /> 
+          </div>
+          Back to Dashboard
+        </Link>
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Account Settings</h1>
+          <p className="text-slate-500 font-medium mt-2">Manage your personal information and security preferences.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
