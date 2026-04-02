@@ -24,6 +24,7 @@ const createRequest = async (req, res) => {
 
         res.status(201).json(request);
     } catch (error) {
+        console.error('Create Request Error:', error);
         res.status(500).json({ message: error.message });
     }
 };
@@ -83,6 +84,7 @@ const getDocument = async (req, res) => {
         res.set('Content-Disposition', `inline; filename="${doc.filename}"`);
         res.send(doc.data);
     } catch (error) {
+        console.error('Get Document Error:', error);
         res.status(500).json({ message: error.message });
     }
 };
