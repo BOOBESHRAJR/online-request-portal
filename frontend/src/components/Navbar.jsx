@@ -100,8 +100,13 @@ const Navbar = ({ toggleSidebar }) => {
                         )}
                      </div>
                      {unreadCount > 0 && (
-                       <button onClick={() => {
-                           notifications.filter(n => !n.isRead).forEach(n => handleMarkAsRead(n._id));
+                       <button onClick={async () => {
+                           try {
+                             await api.put('/notifications/mark-all-read');
+                             setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+                           } catch (error) {
+                             console.error("Failed to mark all read");
+                           }
                          }} 
                          className="text-[10px] text-blue-600 font-bold uppercase hover:text-blue-700 transition-colors flex items-center gap-1.5">
                          <CheckCircle2 size={12} /> Mark all read
