@@ -41,8 +41,8 @@ const RequestDetails = () => {
   useEffect(() => {
     if (user) {
         fetchData();
-        // Chat Sync: Re-fetch every 1 second (Instant Messaging feel)
-        const interval = setInterval(fetchData, 1000);
+        // Chat Sync: Re-fetch every 3 seconds for near live feel
+        const interval = setInterval(fetchData, 3000);
         return () => clearInterval(interval);
     }
   }, [id, user]);
