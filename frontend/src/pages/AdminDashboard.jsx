@@ -26,7 +26,9 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchAdminData = async () => {
-      if (user?.role !== 'admin') {
+      if (!user) return;
+      
+      if (user.role !== 'admin') {
         setLoading(false);
         return;
       }

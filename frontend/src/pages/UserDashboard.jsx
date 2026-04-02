@@ -40,7 +40,7 @@ const UserDashboard = () => {
       }
     };
     fetchDashboard();
-  }, []);
+  }, [user]);
 
   const filteredRequests = requests
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))

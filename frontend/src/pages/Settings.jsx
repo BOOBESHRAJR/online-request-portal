@@ -14,6 +14,16 @@ const Settings = () => {
     email: user?.email || '',
     phoneNumber: user?.phoneNumber || '',
   });
+  
+  React.useEffect(() => {
+    if (user) {
+        setProfile({
+            name: user.name || '',
+            email: user.email || '',
+            phoneNumber: user.phoneNumber || '',
+        });
+    }
+  }, [user]);
 
   const [passwordData, setPasswordData] = useState({
     newPassword: '',

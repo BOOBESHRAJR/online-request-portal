@@ -39,8 +39,8 @@ const RequestDetails = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [id]);
+    if (user) fetchData();
+  }, [id, user]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
