@@ -49,6 +49,10 @@ const AdminDashboard = () => {
       }
     };
     fetchAdminData();
+
+    // Live Sync: Re-fetch every 30 seconds
+    const interval = setInterval(fetchAdminData, 30000);
+    return () => clearInterval(interval);
   }, [user]);
 
   const handleDeleteRequest = async (id) => {

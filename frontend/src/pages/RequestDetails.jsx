@@ -39,7 +39,12 @@ const RequestDetails = () => {
   };
 
   useEffect(() => {
-    if (user) fetchData();
+    if (user) {
+        fetchData();
+        // Chat Sync: Re-fetch every 10 seconds while on this request
+        const interval = setInterval(fetchData, 10000);
+        return () => clearInterval(interval);
+    }
   }, [id, user]);
 
   useEffect(() => {

@@ -34,12 +34,17 @@ const UserDashboard = () => {
         setStats(statsRes.data);
         setRequests(reqRes.data);
       } catch (error) {
-        toast.error("Could not load dashboard data.");
+        console.error("Dashboard Sync Error:", error);
       } finally {
         setLoading(false);
       }
     };
+
     fetchDashboard();
+    
+    // Live Sync: Re-fetch every 30 seconds
+    const interval = setInterval(fetchDashboard, 30000);
+    return () => clearInterval(interval);
   }, [user]);
 
   const filteredRequests = requests
