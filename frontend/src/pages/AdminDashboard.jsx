@@ -50,8 +50,8 @@ const AdminDashboard = () => {
     };
     fetchAdminData();
     
-    // Live Sync: Re-fetch every 3 seconds
-    const interval = setInterval(fetchAdminData, 3000);
+    // Live Sync: Re-fetch every 1 second (Ultra-Fast)
+    const interval = setInterval(fetchAdminData, 1000);
     return () => clearInterval(interval);
   }, [user]);
 
