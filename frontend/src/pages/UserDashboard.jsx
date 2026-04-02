@@ -42,8 +42,8 @@ const UserDashboard = () => {
 
     fetchDashboard();
     
-    // Live Sync: Re-fetch every 15 seconds
-    const interval = setInterval(fetchDashboard, 15000);
+    // Live Sync: Re-fetch every 3 seconds
+    const interval = setInterval(fetchDashboard, 3000);
     return () => clearInterval(interval);
   }, [user]);
 
