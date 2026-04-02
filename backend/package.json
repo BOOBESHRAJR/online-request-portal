@@ -4,8 +4,8 @@
   "description": "Online Information Request Portal Backend",
   "main": "server.js",
   "scripts": {
-    "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider node server.js",
-    "dev": "cross-env NODE_OPTIONS=--openssl-legacy-provider nodemon server.js",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
     "build": "npm install --prefix ../frontend && npm run build --prefix ../frontend"
   },
   "dependencies": {
