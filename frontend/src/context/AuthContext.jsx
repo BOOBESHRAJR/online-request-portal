@@ -11,14 +11,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuth = async (retries = 2) => {
       if (user?.token) {
         try {
           const res = await api.get('/auth/me');
           setUser({ ...res.data, token: user.token });
         } catch (error) {
-          console.error('Session expired', error);
-          logout();
+          // If it's a network error or 500+ and we have retries, wait and try again (Handles Render Cold Start)
+          if (retries > 0 && (!error.response || error.response.status >= 500)) {
+            console.log(`Render cold start detected, retrying... (${retries} left)`);
+            setTimeout(() => checkAuth(retries - 1), 3000);
+            return;
+          }
+          console.error('Session expired or server unavailable', error);
+          if (error.response?.status === 401) logout();
         }
       }
       setLoading(false);
