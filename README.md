@@ -1,141 +1,94 @@
 # Online Information Request Portal
 
 ## Overview
-A PHP and MySQL web application for submitting, reviewing, and tracking information requests. The system supports separate user and admin flows, request attachments, admin replies, in-app request conversations, notifications, analytics, and CSV reporting.
+A modern, responsive MERN-stack web application designed for submitting, reviewing, and tracking information requests. The system supports separate user and admin flows, direct database-hosted document attachments, an admin review queue, a real-time messaging interface, protected routing, and robust analytics.
 
-## Current Features
+## Tech Stack
+- **Frontend**: React (Vite), Tailwind CSS, Axios, Context API
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB (Mongoose ODM)
+- **File Storage**: MongoDB (stored as binary data/Buffers)
+- **Authentication**: JSON Web Tokens (JWT) & bcryptjs for password hashing
 
-### User features
-- User registration and login
-- Dashboard with request statistics for total, pending, approved, and rejected requests
-- Submit new requests with title, description, and category
-- Upload multiple supporting documents with each request
-- View request history with search and pagination
-- Download previously uploaded supporting documents
-- Open a request conversation thread and exchange messages with admin
-- Upload message attachments in request conversations
-- View admin replies directly from the request list
-- Receive notification records when requests are submitted or updated
+## Main Features
 
-### Admin features
-- Admin-only login and role-based access control
-- Dashboard with total, pending, and completed request counts
-- Status analytics and requests-per-department/category chart
-- Review pending requests and approve or reject them
-- Search pending and processed requests
-- View attached documents submitted with requests
-- Send admin replies tied to a request
-- Open request chat threads with users
-- Export request data as CSV
-- View all registered users and roles
+### User Experience
+- **Secure Registration/Login**: Managed via JWT authentication.
+- **Dynamic Dashboard**: Includes statistical breakdown of total, pending, approved, and rejected requests.
+- **Request Creation**: Users can submit well-categorized requests with a description and up to 5 multi-format documents constraints.
+- **Secure Storage**: Uploaded files are immediately processed and saved as binary data in MongoDB.
+- **Request Status**: History table for tracking progress in real-time.
+
+### Admin Experience
+- **Privileged Access**: Only valid admins can access the admin-only routes.
+- **Advanced Dashboard**: Features complete visibility of all system-wide request counts.
+- **Data Review**: Admins can approve or reject tickets.
+- **Documents Preview**: Seamless access to MongoDB-hosted items attached by applicants.
 
 ## Project Structure
 ```text
 online_request_portal/
-|-- admin/
-|   |-- approved_rejected.php
-|   |-- dashboard.php
-|   |-- export_report.php
-|   |-- login.php
-|   |-- logout.php
-|   `-- view_requests.php
-|-- assets/
-|   `-- style.css
-|-- config/
-|   `-- database.php
-|-- db/
-|   `-- schema.sql
-|-- uploads/
-|   `-- messages/
-|-- user/
-|   |-- dashboard.php
-|   |-- login.php
-|   |-- logout.php
-|   |-- submit_request.php
-|   `-- view_status.php
-|-- document_download.php
-|-- index.php
-|-- login.php
-|-- message_attachment_download.php
-|-- register.php
-|-- request_messages.php
-|-- setup.php
-`-- README.md
+|-- backend/
+|   |-- config/       # MongoDB Connection
+|   |-- controllers/  # API Logic
+|   |-- middleware/   # Authentication & Multer configs
+|   |-- models/       # Mongoose Schemas (User, Request, Notification, Message)
+|   |-- routes/       # Express Router instances
+|   |-- server.js     # Entry point
+|   `-- package.json
+|-- frontend/
+|   |-- src/
+|   |   |-- components/ # Navbar, ProtectedRoutes
+|   |   |-- context/    # User Auth Context
+|   |   |-- pages/      # Login, Register, Dashboards, Create Request
+|   |   |-- services/   # Axios instancing
+|   |   |-- App.jsx     # Main React routes
+|   |   `-- main.jsx
+|   |-- tailwind.config.js
+|   `-- vite.config.js
+|-- README.md
 ```
 
-## Tech Stack
-- PHP with MySQLi
-- MySQL
-- HTML, CSS, and vanilla JavaScript
-- Session-based authentication
-
-## Database Tables
-The schema in `db/schema.sql` currently includes:
-
-- `users`
-- `requests`
-- `documents`
-- `notifications`
-- `messages`
-
-The `requests` table also stores `admin_reply` for direct staff feedback on a request.
-
-## Local Setup
+## Setup & Local Development
 
 ### Requirements
-- XAMPP or another PHP + MySQL environment
-- PHP 7.4+ recommended
-- MySQL 5.7+ or MariaDB equivalent
+- Node.js (v16+)
+- MongoDB locally installed or a MongoDB Atlas account
 
 ### Installation
-1. Copy the project into your web root, for example `C:\xampp\htdocs\online_request_portal`.
-2. Create a MySQL database named `online_request_portal`.
-3. Import `db/schema.sql`.
-4. Update `config/database.php` if your local database credentials differ.
-5. Make sure the `uploads/` directory is writable by PHP.
-6. Open `http://localhost/online_request_portal/`.
 
-### Optional setup helper
-You can also run `setup.php` once to create the database objects and upload folders in a local XAMPP-style setup.
+1. Copy the project repository to your desired path.
+2. Initialize **Backend**:
+   ```bash
+   cd backend
+   npm install
+   ```
+3. Initialize **Frontend**:
+   ```bash
+   cd frontend
+   npm install
+   ```
+4. Create an environment file at `backend/.env` containing:
+   ```env
+   PORT=5000
+   MONGO_URI=mongodb://localhost:27017/online_request_portal
+   JWT_SECRET=your_super_secret_jwt_key
+   NODE_ENV=development
+   ```
 
-## Main Workflows
+### Running Locally
 
-### User flow
-1. Register an account.
-2. Sign in from the user portal.
-3. Submit a request, optionally with supporting files.
-4. Track request progress from the status page.
-5. Open the request conversation page to read updates or send a message.
-6. Download attached documents when needed.
+To launch the backend API:
+```bash
+cd backend
+npm run dev
+```
 
-### Admin flow
-1. Sign in from the admin portal.
-2. Review pending requests.
-3. Approve or reject a request.
-4. Send replies or continue the request conversation.
-5. Review processed requests and export reports.
+To launch the Vite frontend UI:
+```bash
+cd frontend
+npm run dev
+```
 
-## File Upload Support
-
-### Request documents
-- Multiple files allowed
-- Accepted formats: `pdf`, `docx`, `jpg`, `jpeg`, `png`
-- Maximum size: 5 MB per file
-
-### Message attachments
-- Accepted formats: `pdf`, `docx`, `jpg`, `jpeg`, `png`
-- Maximum size: 5 MB per file
-
-## Security Notes
-- Passwords are hashed with `password_hash()`
-- Passwords are checked with `password_verify()`
-- Most database writes use prepared statements
-- Sessions are used for authentication and role checks
-- Users can access only their own requests and request files
-- Uploaded files are renamed before storage
-- Output is escaped with `htmlspecialchars()` in views
-
-## Notes
-- `setup.php`, `debug.php`, and `delete_sample_accounts.php` are utility scripts and should not be exposed in production.
-- The app stores uploaded request documents in `uploads/` and chat attachments in `uploads/messages/`.
-- If you deploy this project to a cloud host, persistent storage is required for the upload directories.
+## Deployment Info
+This structure is ready for cloud deployment. The backend `package.json` contains a unified `build` script (`npm install --prefix ../frontend && npm run build --prefix ../frontend`) allowing platforms like Render to build both stacks simultaneously and serve the static files dynamically through the Node instance in production.
