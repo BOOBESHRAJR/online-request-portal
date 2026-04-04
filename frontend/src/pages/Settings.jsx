@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import { User, Mail, Phone, Lock, Save, Shield, UserCircle, KeyRound, CheckCircle2, ArrowLeft } from 'lucide-react';
+import { User, Mail, Phone, Lock, Save, Shield, UserCircle, KeyRound, CheckCircle2, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/api';
 
@@ -31,6 +31,9 @@ const Settings = () => {
     newPassword: '',
     confirmPassword: ''
   });
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
@@ -193,14 +196,21 @@ const Settings = () => {
                                 <div className="relative group">
                                     <KeyRound size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                     <input 
-                                        type="password" 
+                                        type={showOldPassword ? "text" : "password"} 
                                         autoComplete="current-password"
                                         placeholder="••••••••"
                                         required
-                                        className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
+                                        className="w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
                                         value={passwordData.oldPassword}
                                         onChange={(e) => setPasswordData({...passwordData, oldPassword: e.target.value})}
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowOldPassword(!showOldPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                    >
+                                        {showOldPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
                                 </div>
                             </div>
 
@@ -210,14 +220,21 @@ const Settings = () => {
                                     <div className="relative group">
                                         <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                         <input 
-                                            type="password" 
+                                            type={showNewPassword ? "text" : "password"} 
                                             autoComplete="new-password"
                                             placeholder="••••••••"
                                             required
-                                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
+                                            className="w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
                                             value={passwordData.newPassword}
                                             onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                        >
+                                            {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
                                     </div>
                                 </div>
                                 <div className="space-y-1.5">
@@ -225,14 +242,21 @@ const Settings = () => {
                                     <div className="relative group">
                                         <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                                         <input 
-                                            type="password" 
+                                            type={showConfirmPassword ? "text" : "password"} 
                                             autoComplete="new-password"
                                             placeholder="••••••••"
                                             required
-                                            className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
+                                            className="w-full pl-11 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
                                             value={passwordData.confirmPassword}
                                             onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
                                         />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                        >
+                                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
