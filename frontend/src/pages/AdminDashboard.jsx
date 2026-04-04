@@ -6,7 +6,8 @@ import {
   CheckCircle2, Clock, XCircle, Inbox, 
   Search, Mail, ChevronRight, List, 
   Loader2, Filter, User, ShieldCheck,
-  Plus, Trash2, Edit, Layers, PieChart as PieChartIcon
+  Plus, Trash2, Edit, Layers, PieChart as PieChartIcon,
+  Check, X, Eye, ShieldAlert
 } from 'lucide-react';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip
@@ -58,6 +59,23 @@ const AdminDashboard = () => {
     return () => clearInterval(interval);
   }, [user]);
 
+  const handleStatusUpdate = async (id, newStatus) => {
+    try {
+      await api.put(`/admin/requests/${id}`, { status: newStatus });
+      toast.success(`Request ${newStatus} successfully.`);
+      setRequests(prev => prev.map(req => req._id === id ? { ...req, status: newStatus } : req));
+      
+      // Update local stats immediately
+      setStats(prev => {
+        const next = { ...prev };
+        // This is a simple client-side update, will be overwritten by next fetch
+        return next;
+      });
+    } catch (error) {
+      toast.error(error.response?.data?.message || `Failed to update status to ${newStatus}`);
+    }
+  };
+
   const handleDeleteRequest = async (id) => {
     if (!window.confirm("Are you sure you want to delete this request permanently?")) return;
     try {
@@ -104,29 +122,41 @@ const AdminDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 pb-10">
-      {/* Compact Admin Banner Header */}
-      <div className="relative bg-gradient-to-r from-slate-900 to-indigo-900 rounded-2xl p-6 sm:px-10 sm:py-7 overflow-hidden shadow-2xl border border-white/5">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
+      {/* Professional Oversight Header */}
+      <div className="relative bg-[#0f172a] rounded-3xl p-8 sm:px-12 sm:py-10 overflow-hidden shadow-2xl border border-white/5 group">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-[100px] -mr-64 -mt-64 transition-all group-hover:bg-blue-600/10"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-indigo-600/5 rounded-full blur-[100px] -ml-48 -mb-48"></div>
         
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-indigo-600 font-bold uppercase tracking-widest text-[10px] mb-1">
-               <ShieldCheck size={14} /> Administrative Control
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] shadow-sm">
+                Admin Panel
+              </span>
+              <div className="w-1 h-1 bg-slate-700 rounded-full"></div>
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Live Oversight Active</span>
             </div>
-            <h1 className="text-4xl font-black text-white tracking-tight">System Oversight</h1>
-            <p className="text-slate-300 font-medium">Monitor and manage all system activity from your command center.</p>
+            
+            <div className="space-y-1">
+              <h1 className="text-5xl font-black text-white tracking-tight leading-none">System Oversight</h1>
+              <p className="text-slate-400 text-lg font-medium max-w-xl">Comprehensive administrative control and real-time request management center.</p>
+            </div>
           </div>
-        </div>
           
-          <div className="flex items-center gap-4 bg-white/5 backdrop-blur-md rounded-xl p-3 border border-white/5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center text-emerald-400 animate-pulse">
-                <Clock size={16} />
+          <div className="flex items-center gap-6">
+            <div className="h-16 w-[1px] bg-white/10 hidden lg:block"></div>
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Authenticated As</span>
+              <div className="flex items-center gap-3 bg-white/5 border border-white/5 rounded-2xl p-2 pr-4 backdrop-blur-md">
+                <div className="w-8 h-8 rounded-xl bg-blue-500 flex items-center justify-center text-white font-black text-xs">
+                  {user?.name?.charAt(0)}
+                </div>
+                <div>
+                  <p className="text-xs font-black text-white leading-none mb-1">{user?.name}</p>
+                  <p className="text-[9px] font-bold text-blue-400 uppercase tracking-widest leading-none">Super Administrator</p>
+                </div>
               </div>
-              <div className="pr-3">
-                 <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Status</p>
-                 <p className="text-xs font-black text-white leading-none">Live Sync</p>
-              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -274,56 +304,81 @@ const AdminDashboard = () => {
             </div>
           ) : (
             <table className="w-full text-left">
-              <thead className="bg-[#F9FAFB] border-b border-slate-100">
-                <tr className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                  <th className="px-6 py-4">Title & Requester</th>
+              <thead className="bg-[#f8fafc] border-b border-slate-100">
+                <tr className="text-slate-500 text-[10px] font-black uppercase tracking-widest">
+                  <th className="px-6 py-4">Request Title</th>
                   <th className="px-6 py-4">Category</th>
+                  <th className="px-6 py-4">Requester</th>
+                  <th className="px-6 py-4">Submitted</th>
                   <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Submitted On</th>
-                  <th className="px-6 py-4 text-right pr-10">Action</th>
+                  <th className="px-6 py-4 text-right pr-10">Administrative Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredRequests.map((req) => (
-                  <tr key={req._id} className="hover:bg-blue-50/30 transition-all duration-300 group">
+                  <tr key={req._id} className="hover:bg-blue-50/20 transition-all duration-300 group border-l-4 border-l-transparent hover:border-l-blue-500">
                     <td className="px-6 py-5">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-white shadow-sm rounded-xl flex items-center justify-center text-slate-900 font-black text-xs border border-slate-100 group-hover:bg-blue-600 group-hover:text-white transition-all">
-                          {req.user?.name?.charAt(0)}
-                        </div>
-                        <div>
-                          <p className="font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors truncate max-w-[200px] leading-none mb-1.5">{req.title}</p>
-                          <p className="text-[11px] text-slate-400 font-bold flex items-center gap-1.5 leading-none">
-                            <Mail size={12} className="text-slate-300" /> {req.user?.name}
-                          </p>
-                        </div>
-                      </div>
+                       <p className="font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors truncate max-w-[200px] leading-tight mb-1">{req.title}</p>
+                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">ID: {req._id.substring(req._id.length - 8).toUpperCase()}</p>
                     </td>
                     <td className="px-6 py-5">
-                      <span className="text-[11px] font-black uppercase tracking-widest text-slate-600 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 group-hover:bg-blue-50 group-hover:border-blue-100 group-hover:text-blue-600 transition-all">
+                      <span className="text-[10px] font-black uppercase tracking-tight text-slate-500 bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-200">
                         {req.category}
                       </span>
                     </td>
                     <td className="px-6 py-5">
-                      <motion.span 
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        className={`inline-flex px-4 py-1.5 rounded-full text-[10px] font-black uppercase border-2 tracking-widest shadow-sm ${getStatusColor(req.status)}`}
-                      >
-                        {req.status}
-                      </motion.span>
+                       <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 text-[10px] font-black border border-slate-200">
+                            {req.user?.name?.charAt(0)}
+                         </div>
+                         <div className="flex flex-col">
+                            <span className="text-xs font-black text-slate-900 leading-none mb-1">{req.user?.name}</span>
+                            <span className="text-[10px] font-bold text-slate-400 leading-none">{req.user?.email}</span>
+                         </div>
+                       </div>
                     </td>
                     <td className="px-6 py-5 text-slate-500 font-bold text-xs">
                        {new Date(req.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
+                    <td className="px-6 py-5">
+                      <motion.span 
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className={`inline-flex px-3 py-1 rounded-full text-[9px] font-black uppercase border tracking-widest shadow-sm ${getStatusColor(req.status)}`}
+                      >
+                        {req.status}
+                      </motion.span>
+                    </td>
                     <td className="px-6 py-5 text-right pr-6">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {/* Status Quick Actions (Power Features) */}
+                        {req.status === 'pending' && (
+                          <>
+                            <button 
+                              onClick={() => handleStatusUpdate(req._id, 'approved')}
+                              className="h-10 px-3 flex items-center gap-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-tight"
+                              title="Quick Approve"
+                            >
+                              <Check size={14} /> Approve
+                            </button>
+                            <button 
+                              onClick={() => handleStatusUpdate(req._id, 'rejected')}
+                              className="h-10 px-3 flex items-center gap-2 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition-all font-black text-[10px] uppercase tracking-tight"
+                              title="Quick Reject"
+                            >
+                              <X size={14} /> Reject
+                            </button>
+                          </>
+                        )}
+
+                        <div className="w-[2px] h-6 bg-slate-100 mx-1"></div>
+
                         <Link 
                           to={`/request/${req._id}`} 
-                          className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white border border-slate-100 transition-all shadow-sm"
-                          title="Review & Update"
+                          className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 text-slate-400 hover:bg-blue-600 hover:text-white border border-slate-100 transition-all shadow-sm"
+                          title="Full Review"
                         >
-                          <Edit size={16} />
+                          <Eye size={16} />
                         </Link>
                         <button 
                           onClick={() => handleDeleteRequest(req._id)}
