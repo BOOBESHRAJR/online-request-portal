@@ -72,8 +72,6 @@ const getMe = async (req, res) => {
     }
 };
 
-};
-
 const updateUserProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
