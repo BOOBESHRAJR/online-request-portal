@@ -23,8 +23,8 @@ const CreateRequest = () => {
     const selectedFiles = Array.from(e.target.files);
     
     // Total files limit check
-    if (files.length + selectedFiles.length > 5) {
-      toast.error('Maximum 5 files allowed');
+    if (files.length + selectedFiles.length > 10) {
+      toast.error('Maximum 10 files allowed');
       return;
     }
 
@@ -163,7 +163,7 @@ const CreateRequest = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center ml-1 mb-1">
                  <label className="text-sm font-bold text-slate-700">Attachments</label>
-                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{files.length} / 5 files</span>
+                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{files.length} / 10 files</span>
               </div>
               <div className={`relative border-2 border-dashed rounded-xl transition-all p-8 flex flex-col items-center justify-center text-center
                  ${files.length > 0 ? 'border-blue-200 bg-blue-50/20' : 'border-slate-200 hover:border-blue-400 hover:bg-slate-50'}`}>
@@ -180,7 +180,7 @@ const CreateRequest = () => {
                 </div>
                 <h4 className="font-bold text-slate-800">Upload documents</h4>
                 <p className="text-sm font-medium text-slate-500 mt-1 max-w-xs">
-                   Drag & drop or click to choose files. PDF, JPG, or PNG (Max 5MB).
+                   Drag & drop or click to choose files. PDF, JPG, or PNG (Max 10 files, 5MB each).
                 </p>
               </div>
 

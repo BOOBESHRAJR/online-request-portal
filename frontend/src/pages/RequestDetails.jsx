@@ -7,7 +7,8 @@ import {
   Paperclip, Send, File, Download, 
   Loader2, MessageCircle, CheckCircle2, XCircle, Clock, 
   ArrowLeft, User, Calendar, ShieldCheck, FileText, Eye,
-  Activity, Info
+  ArrowLeft, User, Calendar, ShieldCheck, FileText, Eye,
+  Activity, Info, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -19,7 +20,7 @@ const RequestDetails = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [adminReply, setAdminReply] = useState('');
-  const [attachment, setAttachment] = useState(null);
+  const [attachments, setAttachments] = useState([]);
   const [statusLoading, setStatusLoading] = useState(false);
   const [sendingMsg, setSendingMsg] = useState(false);
   const messagesEndRef = useRef(null);
@@ -61,20 +62,20 @@ const RequestDetails = () => {
 
   const handleMessageSubmit = async (e) => {
     if (e) e.preventDefault();
-    if (!newMessage.trim() && !attachment) return;
-
     try {
       setSendingMsg(true);
       const formData = new FormData();
       formData.append('message', newMessage);
-      if (attachment) formData.append('attachment', attachment);
+      attachments.forEach(file => {
+        formData.append('attachments', file);
+      });
 
       await api.post(`/messages/${id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
       setNewMessage('');
-      setAttachment(null);
+      setAttachments([]);
       
       const msgRes = await api.get(`/messages/${id}`);
       setMessages(msgRes.data);
@@ -315,36 +316,40 @@ const RequestDetails = () => {
                                       isMe ? 'bg-indigo-600 text-white rounded-[1.5rem] rounded-tr-md' : 'bg-white border border-slate-200/60 text-slate-800 rounded-[1.5rem] rounded-tl-md shadow-slate-200/50'
                                   }`}>
                                       {msg.message && <p className="text-[15px] font-medium leading-relaxed whitespace-pre-wrap">{msg.message}</p>}
-                                      {msg.attachment && (() => {
-                                          const hasLegacyMsgPath = !!msg.attachment.path;
-                                          const msgAttachUrl = hasLegacyMsgPath 
-                                              ? (msg.attachment.path.startsWith('http') ? msg.attachment.path : `/${msg.attachment.path}`)
-                                              : `${import.meta.env.VITE_API_URL || '/api'}/messages/attachment/${msg._id}?token=${user.token}`;
-                                              
-                                          const msgAttachType = msg.attachment.contentType || msg.attachment.mimetype;
-                                          const msgIsImage = msgAttachType ? msgAttachType.startsWith('image/') : /\.(jpg|jpeg|png|gif|webp)$/i.test(msg.attachment.filename);
+                                      {msg.attachments && msg.attachments.length > 0 && (
+                                          <div className={`mt-3 flex flex-wrap gap-3 ${msg.message ? (isMe ? 'border-t border-indigo-400/30 pt-3' : 'border-t border-slate-100 pt-3') : ''}`}>
+                                              {msg.attachments.map((attach, i) => {
+                                                  const hasLegacyMsgPath = !!attach.path;
+                                                  const msgAttachUrl = hasLegacyMsgPath 
+                                                      ? (attach.path.startsWith('http') ? attach.path : `/${attach.path}`)
+                                                      : `${import.meta.env.VITE_API_URL || '/api'}/messages/${msg._id}/attachment/${attach._id}?token=${user.token}`;
+                                                      
+                                                  const msgAttachType = attach.contentType || attach.mimetype;
+                                                  const msgIsImage = msgAttachType ? msgAttachType.startsWith('image/') : /\.(jpg|jpeg|png|gif|webp)$/i.test(attach.filename);
 
-                                          return (
-                                              <div className={`mt-3 ${msg.message ? (isMe ? 'border-t border-indigo-400/30 pt-3' : 'border-t border-slate-100 pt-3') : ''}`}>
-                                                  {msgIsImage ? (
-                                                      <div className="rounded-xl overflow-hidden shadow-sm hover:opacity-90 transition-opacity border border-black/5 bg-black/5">
-                                                          <img onClick={() => window.open(msgAttachUrl, '_blank')} src={msgAttachUrl} alt="attachment" className="max-h-60 w-auto object-cover cursor-pointer" />
+                                                  return (
+                                                      <div key={attach._id} className="w-full max-w-sm">
+                                                          {msgIsImage ? (
+                                                              <div className="rounded-xl overflow-hidden shadow-sm hover:opacity-90 transition-opacity border border-black/5 bg-black/5">
+                                                                  <img onClick={() => window.open(msgAttachUrl, '_blank')} src={msgAttachUrl} alt="attachment" className="max-h-60 w-full object-cover cursor-pointer" />
+                                                              </div>
+                                                          ) : (
+                                                              <a href={msgAttachUrl} target="_blank" className={`flex items-center gap-3 p-3 rounded-xl border transition-all shadow-sm ${isMe ? 'bg-indigo-700/50 border-indigo-500 hover:bg-indigo-700' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`}>
+                                                                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isMe ? 'bg-white/20' : 'bg-white border border-slate-200 shadow-sm'}`}>
+                                                                      <File size={20} className={isMe ? 'text-white' : 'text-slate-500'} />
+                                                                  </div>
+                                                                  <div className="overflow-hidden min-w-[120px]">
+                                                                      <p className={`text-sm font-bold truncate ${isMe ? 'text-white' : 'text-slate-800'}`}>{attach.filename}</p>
+                                                                      <p className={`text-[10px] uppercase font-bold tracking-widest mt-0.5 ${isMe ? 'text-indigo-200' : 'text-slate-400'}`}>Document</p>
+                                                                  </div>
+                                                                  <Download size={16} className={`shrink-0 ${isMe ? 'opacity-50 text-white' : 'text-slate-400'}`} />
+                                                              </a>
+                                                          )}
                                                       </div>
-                                                  ) : (
-                                                      <a href={msgAttachUrl} target="_blank" className={`flex items-center gap-3 p-3 rounded-xl border transition-all shadow-sm ${isMe ? 'bg-indigo-700/50 border-indigo-500 hover:bg-indigo-700' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'}`}>
-                                                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isMe ? 'bg-white/20' : 'bg-white border border-slate-200 shadow-sm'}`}>
-                                                              <File size={20} className={isMe ? 'text-white' : 'text-slate-500'} />
-                                                          </div>
-                                                          <div className="overflow-hidden min-w-[120px]">
-                                                              <p className={`text-sm font-bold truncate ${isMe ? 'text-white' : 'text-slate-800'}`}>{msg.attachment.filename}</p>
-                                                              <p className={`text-[10px] uppercase font-bold tracking-widest mt-0.5 ${isMe ? 'text-indigo-200' : 'text-slate-400'}`}>Document attached</p>
-                                                          </div>
-                                                          <Download size={16} className={`shrink-0 ${isMe ? 'opacity-50 text-white' : 'text-slate-400'}`} />
-                                                      </a>
-                                                  )}
-                                              </div>
-                                          )
-                                      })()}
+                                                  )
+                                              })}
+                                          </div>
+                                      )}
                                   </div>
                               </div>
                           </div>
@@ -356,24 +361,45 @@ const RequestDetails = () => {
 
            {/* Input Area */}
            <div className="p-4 bg-white border-t border-slate-100 shrink-0 relative z-10 shadow-[0_-4px_20px_-15px_rgba(0,0,0,0.05)]">
-              {attachment && (
-                  <div className="mb-4 inline-flex items-center gap-3 bg-indigo-50 border border-indigo-100 pl-4 pr-2 py-2 rounded-xl animate-in slide-in-from-bottom-2 duration-300">
-                      <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm">
-                        <Paperclip size={14} className="text-indigo-500"/>
-                      </div>
-                      <div>
-                        <span className="block text-sm font-bold text-slate-800 truncate max-w-[200px] leading-tight">{attachment.name}</span>
-                        <span className="block text-[9px] uppercase font-black text-indigo-400 tracking-widest mt-0.5">Attached</span>
-                      </div>
-                      <button onClick={() => setAttachment(null)} className="ml-2 w-8 h-8 flex items-center justify-center hover:bg-indigo-100 rounded-lg text-indigo-500 transition-colors"><XCircle size={18}/></button>
+               {attachments.length > 0 && (
+                  <div className="mb-4 flex flex-wrap gap-2 animate-in slide-in-from-bottom-2 duration-300">
+                      {attachments.map((file, idx) => (
+                        <div key={idx} className="inline-flex items-center gap-3 bg-indigo-50 border border-indigo-100 pl-4 pr-2 py-2 rounded-xl">
+                            <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm">
+                                <Paperclip size={14} className="text-indigo-500" />
+                            </div>
+                            <div className="max-w-[150px]">
+                                <span className="block text-[11px] font-bold text-slate-800 truncate leading-tight">{file.name}</span>
+                                <span className="block text-[9px] uppercase font-black text-indigo-400 tracking-widest mt-0.5">{(file.size / 1024 / 1024).toFixed(1)}MB</span>
+                            </div>
+                            <button 
+                                type="button"
+                                onClick={() => setAttachments(attachments.filter((_, i) => i !== idx))} 
+                                className="ml-1 w-7 h-7 flex items-center justify-center hover:bg-rose-100 hover:text-rose-600 rounded-lg text-slate-400 transition-colors"
+                            >
+                                <X size={14} />
+                            </button>
+                        </div>
+                      ))}
                   </div>
-              )}
+               )}
               <form onSubmit={handleMessageSubmit} className="flex items-end gap-3 max-w-5xl mx-auto">
                   <label className={`shrink-0 w-12 h-12 rounded-[14px] flex items-center justify-center cursor-pointer transition-all border shadow-sm ${
-                      attachment ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-400 hover:text-indigo-500 hover:border-indigo-200 hover:bg-slate-50'
+                      attachments.length > 0 ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-400 hover:text-indigo-500 hover:border-indigo-200 hover:bg-slate-50'
                   }`}>
-                      <input type="file" className="hidden" onChange={e => setAttachment(e.target.files[0])} />
-                      <Paperclip size={20} className={attachment ? 'rotate-45 transition-transform' : ''} />
+                      <input 
+                        type="file" 
+                        multiple 
+                        className="hidden" 
+                        accept=".jpg,.jpeg,.png,.pdf"
+                        onChange={e => {
+                            const newFiles = Array.from(e.target.files);
+                            const validFiles = newFiles.filter(f => f.size <= 5 * 1024 * 1024);
+                            if (validFiles.length < newFiles.length) toast.error("Some files were skipped (max 5MB each)");
+                            setAttachments([...attachments, ...validFiles].slice(0, 5));
+                        }} 
+                      />
+                      <Paperclip size={20} className={attachments.length > 0 ? 'rotate-45 transition-transform' : ''} />
                   </label>
                   <textarea 
                       rows="1"
@@ -387,7 +413,7 @@ const RequestDetails = () => {
                   />
                   <button 
                       type="submit"
-                      disabled={sendingMsg || (!newMessage.trim() && !attachment)}
+                      disabled={sendingMsg || (!newMessage.trim() && attachments.length === 0)}
                       className="shrink-0 w-12 h-12 bg-indigo-600 hover:bg-indigo-700 text-white rounded-[14px] flex items-center justify-center disabled:opacity-50 disabled:shadow-none transition-all shadow-lg shadow-indigo-500/25 active:scale-90"
                   >
                       {sendingMsg ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} className="ml-1" />}

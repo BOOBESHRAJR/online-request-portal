@@ -5,7 +5,7 @@ const { verifyToken } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
 router.route('/')
-      .post(verifyToken, upload.array('documents', 5), createRequest)
+      .post(verifyToken, upload.array('documents', 10), createRequest)
       .get(verifyToken, getMyRequests);
 
 router.get('/stats', verifyToken, getUserStats);

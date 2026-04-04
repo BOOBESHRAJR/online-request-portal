@@ -6,8 +6,8 @@ const upload = require('../middleware/uploadMiddleware');
 
 router.route('/:requestId')
       .get(verifyToken, getMessagesByRequest)
-      .post(verifyToken, upload.single('attachment'), sendMessage);
+      .post(verifyToken, upload.array('attachments', 5), sendMessage);
 
-router.get('/attachment/:messageId', verifyToken, getMessageAttachment);
+router.get('/:messageId/attachment/:attachmentId', verifyToken, getMessageAttachment);
 
 module.exports = router;

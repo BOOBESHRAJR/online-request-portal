@@ -14,11 +14,11 @@ const messageSchema = mongoose.Schema({
     message: {
         type: String
     },
-    attachment: {
+    attachments: [{
         filename: { type: String },
         data: { type: Buffer },
         contentType: { type: String }
-    }
+    }]
 }, {
     timestamps: true
 });
