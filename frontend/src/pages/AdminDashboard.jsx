@@ -6,8 +6,13 @@ import {
   CheckCircle2, Clock, XCircle, Inbox, 
   Search, Mail, ChevronRight, List, 
   Loader2, Filter, User, ShieldCheck,
-  Plus, Trash2, Edit
+  Plus, Trash2, Edit, PieChart as PieChartIcon, BarChart as BarChartIcon, Layers
 } from 'lucide-react';
+import { 
+  PieChart, Pie, Cell, ResponsiveContainer, 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  AreaChart, Area
+} from 'recharts';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -147,6 +152,90 @@ const AdminDashboard = () => {
           </div>
         ))}
       </div>
+
+      {/* Admin Visual Analytics */}
+      {stats.total > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in slide-in-from-bottom-4 duration-700 delay-150">
+          {/* Bar Chart: Global Status */}
+          <div className="lg:col-span-12 xl:col-span-8 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+             <div className="flex items-center justify-between mb-10">
+                <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                      <BarChartIcon size={20} />
+                   </div>
+                   <div>
+                      <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">System Performance</h3>
+                      <p className="text-[10px] font-bold text-slate-400">Monthly throughput by status</p>
+                   </div>
+                </div>
+                <div className="flex gap-2">
+                   {['Pending', 'Approved', 'Rejected'].map((l, i) => (
+                      <div key={i} className="flex items-center gap-1.5">
+                         <div className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-amber-400' : i === 1 ? 'bg-emerald-500' : 'bg-rose-500'}`}></div>
+                         <span className="text-[9px] font-black text-slate-400 uppercase">{l}</span>
+                      </div>
+                   ))}
+                </div>
+             </div>
+             <div className="h-72 w-full">
+               <ResponsiveContainer width="100%" height="100%">
+                 <BarChart 
+                   data={[
+                     { name: 'Request Volume', pending: stats.pending, approved: stats.approved, rejected: stats.rejected }
+                   ]}
+                 >
+                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                   <XAxis dataKey="name" hide />
+                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 'bold', fill: '#94a3b8' }} />
+                   <Tooltip 
+                     cursor={{ fill: '#f8fafc' }}
+                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
+                   />
+                   <Bar dataKey="pending" fill="#fbbf24" radius={[4, 4, 0, 0]} barSize={60} />
+                   <Bar dataKey="approved" fill="#10b981" radius={[4, 4, 0, 0]} barSize={60} />
+                   <Bar dataKey="rejected" fill="#ef4444" radius={[4, 4, 0, 0]} barSize={60} />
+                 </BarChart>
+               </ResponsiveContainer>
+             </div>
+          </div>
+
+          {/* Pie Chart: Category Mix */}
+          <div className="lg:col-span-12 xl:col-span-4 bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
+             <div className="flex items-center gap-3 mb-10">
+                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                   <Layers size={20} />
+                </div>
+                <div>
+                   <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Category Distribution</h3>
+                   <p className="text-[10px] font-bold text-slate-400">Total volume by request type</p>
+                </div>
+             </div>
+             <div className="h-72 w-full">
+               <ResponsiveContainer width="100%" height="100%">
+                 <PieChart>
+                   <Pie
+                     data={stats.categoryCounts?.map(c => ({ name: c._id, value: c.count })) || []}
+                     cx="50%"
+                     cy="50%"
+                     innerRadius={60}
+                     outerRadius={90}
+                     paddingAngle={5}
+                     dataKey="value"
+                   >
+                     {stats.categoryCounts?.map((entry, index) => (
+                       <Cell key={`cell-${index}`} fill={['#6366f1', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'][index % 5]} />
+                     ))}
+                   </Pie>
+                   <Tooltip 
+                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
+                     itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
+                   />
+                 </PieChart>
+               </ResponsiveContainer>
+             </div>
+          </div>
+        </div>
+      )}
 
       {/* Request Table */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden text-sm">
