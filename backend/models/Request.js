@@ -30,6 +30,10 @@ const requestSchema = mongoose.Schema({
     }],
     adminReply: {
         type: String
+    },
+    hiddenFromAdmin: {
+        type: Boolean,
+        default: false
     }
 }, {
     timestamps: true
