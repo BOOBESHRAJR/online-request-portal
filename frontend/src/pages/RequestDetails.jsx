@@ -7,7 +7,6 @@ import {
   Paperclip, Send, File, Download, 
   Loader2, MessageCircle, CheckCircle2, XCircle, Clock, 
   ArrowLeft, User, Calendar, ShieldCheck, FileText, Eye,
-  ArrowLeft, User, Calendar, ShieldCheck, FileText, Eye,
   Activity, Info, X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
