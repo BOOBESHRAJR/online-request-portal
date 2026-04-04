@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { User, Mail, Phone, Lock, Save, Shield, UserCircle, KeyRound, CheckCircle2, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
+import api from '../services/api';
 
 const Settings = () => {
   const { user, updateUser } = useAuth();
@@ -26,6 +27,7 @@ const Settings = () => {
   }, [user]);
 
   const [passwordData, setPasswordData] = useState({
+    oldPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
@@ -52,8 +54,8 @@ const Settings = () => {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    if (!passwordData.newPassword) {
-        return toast.error('Please enter a new password');
+    if (!passwordData.oldPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+        return toast.error('Please fill all password fields');
     }
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       return toast.error('New passwords do not match');
@@ -61,11 +63,12 @@ const Settings = () => {
 
     setLoading(true);
     try {
-      await updateUser({
-        password: passwordData.newPassword
+      await api.post('/auth/change-password', {
+        oldPassword: passwordData.oldPassword,
+        newPassword: passwordData.newPassword
       });
-      toast.success('Password changed successfully.');
-      setPasswordData({ newPassword: '', confirmPassword: ''});
+      toast.success('Password updated successfully.');
+      setPasswordData({ oldPassword: '', newPassword: '', confirmPassword: ''});
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update password');
     } finally {
@@ -184,7 +187,23 @@ const Settings = () => {
                             <KeyRound className="text-blue-600" size={24} /> Security Credentials
                         </h2>
                         
-                        <form onSubmit={handlePasswordSubmit} className="space-y-8">
+                        <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-bold text-slate-700 ml-1">Current Password</label>
+                                <div className="relative group">
+                                    <KeyRound size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                                    <input 
+                                        type="password" 
+                                        autoComplete="current-password"
+                                        placeholder="••••••••"
+                                        required
+                                        className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
+                                        value={passwordData.oldPassword}
+                                        onChange={(e) => setPasswordData({...passwordData, oldPassword: e.target.value})}
+                                    />
+                                </div>
+                            </div>
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div className="space-y-1.5">
                                     <label className="text-sm font-bold text-slate-700 ml-1">New Secure Password</label>
@@ -194,6 +213,7 @@ const Settings = () => {
                                             type="password" 
                                             autoComplete="new-password"
                                             placeholder="••••••••"
+                                            required
                                             className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
                                             value={passwordData.newPassword}
                                             onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
@@ -208,6 +228,7 @@ const Settings = () => {
                                             type="password" 
                                             autoComplete="new-password"
                                             placeholder="••••••••"
+                                            required
                                             className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white outline-none transition-all font-medium text-slate-700 text-[15px]"
                                             value={passwordData.confirmPassword}
                                             onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}

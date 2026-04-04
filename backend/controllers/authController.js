@@ -72,6 +72,8 @@ const getMe = async (req, res) => {
     }
 };
 
+};
+
 const updateUserProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user.id);
@@ -103,9 +105,36 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const user = await User.findById(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Compare old password
+        const isMatch = await user.matchPassword(oldPassword);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Old password is incorrect' });
+        }
+
+        // Hash and save new password (middleware will hash it if we just set it)
+        user.password = newPassword;
+        await user.save();
+
+        res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Change Password Error:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     registerUser,
     loginUser,
     getMe,
     updateUserProfile,
+    changePassword,
 };
