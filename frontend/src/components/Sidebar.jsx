@@ -18,15 +18,15 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       title: 'System',
       items: [
         { label: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-        { label: 'All Requests', path: '/admin', icon: List },
-        { label: 'Manage Users', path: '/admin', icon: Users },
+        { label: 'All Requests', path: '/admin/requests', icon: List },
+        { label: 'Manage Users', path: '/admin/users', icon: Users },
       ]
     },
     {
       title: 'Analysis',
       items: [
-        { label: 'Analytics', path: '/admin', icon: PieChart },
-        { label: 'System Control', path: '/admin', icon: Database },
+        { label: 'Analytics', path: '/admin/analytics', icon: PieChart },
+        { label: 'System Control', path: '/admin/system', icon: Database },
       ]
     },
     {

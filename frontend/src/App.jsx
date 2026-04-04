@@ -10,6 +10,11 @@ import RequestDetails from './pages/RequestDetails';
 import Settings from './pages/Settings';
 import Support from './pages/Support';
 import EditRequest from './pages/EditRequest';
+import SaaSAdminDashboard from './pages/admin/AdminDashboard';
+import AdminRequests from './pages/admin/AdminRequests';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminAnalytics from './pages/admin/AdminAnalytics';
+import AdminSystem from './pages/admin/AdminSystem';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 
@@ -34,7 +39,14 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<Layout><UserDashboard /></Layout>} path="/dashboard" />
           <Route element={<Layout><CreateRequest /></Layout>} path="/create-request" />
-          <Route element={<Layout><AdminDashboard /></Layout>} path="/admin" />
+          
+          {/* Professional Admin Module Routes */}
+          <Route element={<Layout><SaaSAdminDashboard /></Layout>} path="/admin" />
+          <Route element={<Layout><AdminRequests /></Layout>} path="/admin/requests" />
+          <Route element={<Layout><AdminUsers /></Layout>} path="/admin/users" />
+          <Route element={<Layout><AdminAnalytics /></Layout>} path="/admin/analytics" />
+          <Route element={<Layout><AdminSystem /></Layout>} path="/admin/system" />
+
           <Route element={<Layout><RequestDetails /></Layout>} path="/request/:id" />
           <Route element={<Layout><EditRequest /></Layout>} path="/edit-request/:id" />
           <Route element={<Layout><Settings /></Layout>} path="/settings" />
