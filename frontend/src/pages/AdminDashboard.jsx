@@ -6,8 +6,11 @@ import {
   CheckCircle2, Clock, XCircle, Inbox, 
   Search, Mail, ChevronRight, List, 
   Loader2, Filter, User, ShieldCheck,
-  Plus, Trash2, Edit
+  Plus, Trash2, Edit, Layers, PieChart as PieChartIcon
 } from 'lucide-react';
+import { 
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip
+} from 'recharts';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -147,6 +150,44 @@ const AdminDashboard = () => {
           </div>
         ))}
       </div>
+
+      {/* Admin Visual Analytics: Category Mix */}
+      {stats.total > 0 && (
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all animate-in slide-in-from-bottom-4 duration-700 delay-150">
+             <div className="flex items-center gap-3 mb-10">
+                <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+                   <Layers size={20} />
+                </div>
+                <div>
+                   <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Category Distribution</h3>
+                   <p className="text-[10px] font-bold text-slate-400">Total volume by request type</p>
+                </div>
+             </div>
+             <div className="h-72 w-full">
+               <ResponsiveContainer width="100%" height="100%">
+                 <PieChart>
+                   <Pie
+                     data={stats.categoryCounts?.map(c => ({ name: c._id, value: c.count })) || []}
+                     cx="50%"
+                     cy="50%"
+                     innerRadius={60}
+                     outerRadius={90}
+                     paddingAngle={5}
+                     dataKey="value"
+                   >
+                     {stats.categoryCounts?.map((entry, index) => (
+                       <Cell key={`cell-${index}`} fill={['#6366f1', '#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b'][index % 5]} />
+                     ))}
+                   </Pie>
+                   <Tooltip 
+                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
+                     itemStyle={{ fontSize: '11px', fontWeight: 'bold' }}
+                   />
+                 </PieChart>
+               </ResponsiveContainer>
+             </div>
+        </div>
+      )}
 
       {/* Request Table */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden text-sm">
