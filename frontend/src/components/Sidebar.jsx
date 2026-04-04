@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { 
   LayoutDashboard, PlusCircle, List, 
   ShieldAlert, Settings, HelpCircle, 
-  X, ShieldCheck, Mail, LogOut
+  X, ShieldCheck, LogOut
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
@@ -21,12 +21,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       label: 'Create Request', 
       path: '/create-request', 
       icon: PlusCircle,
-      role: 'user'
-    },
-    { 
-      label: 'My Requests', 
-      path: '/dashboard', // Using dashboard as summary for now
-      icon: Mail,
       role: 'user'
     },
     { 
