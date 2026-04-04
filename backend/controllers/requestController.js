@@ -89,10 +89,35 @@ const getDocument = async (req, res) => {
     }
 };
 
+const updateRequest = async (req, res) => {
+    try {
+        const { title, description, category } = req.body;
+        const request = await Request.findById(req.params.id);
+
+        if (!request) {
+            return res.status(404).json({ message: 'Request not found' });
+        }
+
+        if (request.user.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        request.title = title || request.title;
+        request.description = description || request.description;
+        request.category = category || request.category;
+
+        const updatedRequest = await request.save();
+        res.json(updatedRequest);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createRequest,
     getMyRequests,
     getRequestById,
     getUserStats,
-    getDocument
+    getDocument,
+    updateRequest
 };

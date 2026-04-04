@@ -9,6 +9,7 @@ import CreateRequest from './pages/CreateRequest';
 import RequestDetails from './pages/RequestDetails';
 import Settings from './pages/Settings';
 import Support from './pages/Support';
+import EditRequest from './pages/EditRequest';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 
@@ -35,6 +36,7 @@ function App() {
           <Route element={<Layout><CreateRequest /></Layout>} path="/create-request" />
           <Route element={<Layout><AdminDashboard /></Layout>} path="/admin" />
           <Route element={<Layout><RequestDetails /></Layout>} path="/request/:id" />
+          <Route element={<Layout><EditRequest /></Layout>} path="/edit-request/:id" />
           <Route element={<Layout><Settings /></Layout>} path="/settings" />
           <Route element={<Layout><Support /></Layout>} path="/support" />
         </Route>

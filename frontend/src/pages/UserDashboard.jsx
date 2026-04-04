@@ -6,7 +6,7 @@ import api from '../services/api';
 import { 
   FileText, CheckCircle2, Clock, XCircle, 
   Plus, Loader2, ChevronRight, Inbox,
-  Calendar, Search, Filter
+  Calendar, Search, Filter, Pencil
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -242,10 +242,18 @@ const UserDashboard = () => {
                         {req.status}
                       </motion.span>
                     </td>
-                    <td className="px-6 py-5 text-right pr-6">
+                    <td className="px-6 py-5 text-right pr-6 space-x-2">
+                      <Link 
+                        to={`/edit-request/${req._id}`} 
+                        className="inline-flex items-center justify-center w-10 h-10 bg-slate-50 hover:bg-amber-500 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100 active:scale-90"
+                        title="Edit Request"
+                      >
+                        <Pencil size={16} />
+                      </Link>
                       <Link 
                         to={`/request/${req._id}`} 
                         className="inline-flex items-center justify-center w-10 h-10 bg-slate-50 hover:bg-blue-600 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100 active:scale-90"
+                        title="View Details"
                       >
                         <ChevronRight size={18} />
                       </Link>
