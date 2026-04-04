@@ -6,7 +6,7 @@ import api from '../services/api';
 import { 
   FileText, CheckCircle2, Clock, XCircle, 
   Plus, Loader2, ChevronRight, Inbox,
-  Calendar, Search, Filter, Pencil
+  Calendar, Search, Filter, Pencil, Trash2
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -243,13 +243,36 @@ const UserDashboard = () => {
                       </motion.span>
                     </td>
                     <td className="px-6 py-5 text-right pr-6 space-x-2">
-                      <Link 
-                        to={`/edit-request/${req._id}`} 
-                        className="inline-flex items-center justify-center w-10 h-10 bg-slate-50 hover:bg-amber-500 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100 active:scale-90"
-                        title="Edit Request"
-                      >
-                        <Pencil size={16} />
-                      </Link>
+                      {req.status === 'pending' ? (
+                        <>
+                          <Link 
+                            to={`/edit-request/${req._id}`} 
+                            className="inline-flex items-center justify-center w-10 h-10 bg-slate-50 hover:bg-amber-500 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100 active:scale-90"
+                            title="Edit Request"
+                          >
+                            <Pencil size={16} />
+                          </Link>
+                          {/* Placeholder for Delete button based on requirement to "Disable" */}
+                          <button 
+                            className="inline-flex items-center justify-center w-10 h-10 bg-slate-50 hover:bg-rose-500 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100 active:scale-90"
+                            title="Delete Request"
+                            onClick={() => toast.error("Delete functionality not enabled yet.")}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </>
+                      ) : (
+                        <div className="inline-flex items-center gap-2 group/msg cursor-not-allowed opacity-40">
+                             <span className="hidden group-hover/msg:block text-[9px] font-black uppercase text-rose-500 tracking-tighter">Cannot modify after {req.status}</span>
+                             <div className="inline-flex items-center justify-center w-10 h-10 bg-slate-100 text-slate-300 rounded-xl border border-slate-100">
+                                <Pencil size={16} />
+                             </div>
+                             <div className="inline-flex items-center justify-center w-10 h-10 bg-slate-100 text-slate-300 rounded-xl border border-slate-100">
+                                <Trash2 size={16} />
+                             </div>
+                        </div>
+                      )}
+                      
                       <Link 
                         to={`/request/${req._id}`} 
                         className="inline-flex items-center justify-center w-10 h-10 bg-slate-50 hover:bg-blue-600 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100 active:scale-90"

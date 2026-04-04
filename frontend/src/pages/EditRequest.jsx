@@ -31,6 +31,13 @@ const EditRequest = () => {
     const fetchRequest = async () => {
       try {
         const res = await api.get(`/requests/${id}`);
+        
+        if (res.data.status !== 'pending') {
+          toast.error("Cannot modify request after approval or rejection.");
+          navigate('/dashboard');
+          return;
+        }
+
         setFormData({
           title: res.data.title,
           description: res.data.description,
