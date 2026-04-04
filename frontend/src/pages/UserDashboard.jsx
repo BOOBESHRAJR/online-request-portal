@@ -67,15 +67,16 @@ const UserDashboard = () => {
   };
 
   const handleDelete = async (request_id) => {
-    if (!window.confirm("Are you sure you want to delete this request? This cannot be undone.")) return;
+    if (!window.confirm("CONFIRMATION: Are you sure you want to delete this request permanently? This will remove the record for both you and the system administrators.")) return;
     try {
+      // Rebuild trigger: Fixed handleDelete wiring
       await api.delete(`/requests/${request_id}`);
       toast.success('Request deleted successfully.');
       setRequests(requests.filter(r => r._id !== request_id));
       const statsRes = await api.get('/requests/stats');
       setStats(statsRes.data);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Delete failed.');
+      toast.error(err.response?.data?.message || 'Delete operation failed.');
     }
   };
 
