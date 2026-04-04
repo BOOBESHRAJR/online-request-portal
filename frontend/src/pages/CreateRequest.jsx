@@ -21,20 +21,43 @@ const CreateRequest = () => {
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
+    
+    // Total files limit check
     if (files.length + selectedFiles.length > 5) {
       toast.error('Maximum 5 files allowed');
       return;
     }
 
-    const newFiles = selectedFiles.map(file => ({
-      file: file,
-      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
-      name: file.name,
-      size: file.size,
-      type: file.type
-    }));
+    const ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
-    setFiles([...files, ...newFiles]);
+    const validNewFiles = [];
+    
+    for (const file of selectedFiles) {
+      // Type validation
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        toast.error(`"${file.name}" is not a valid file type. Only PDF and Images (JPG, PNG) are allowed.`);
+        continue;
+      }
+
+      // Size validation
+      if (file.size > MAX_SIZE) {
+        toast.error(`"${file.name}" is too large. Maximum size is 5MB.`);
+        continue;
+      }
+
+      validNewFiles.push({
+        file: file,
+        preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : null,
+        name: file.name,
+        size: file.size,
+        type: file.type
+      });
+    }
+
+    if (validNewFiles.length > 0) {
+      setFiles([...files, ...validNewFiles]);
+    }
   };
 
   const removeFile = (index) => {
@@ -147,7 +170,7 @@ const CreateRequest = () => {
                 <input 
                   type="file" 
                   multiple
-                  accept=".jpg,.jpeg,.png,.pdf,.docx,.doc"
+                  accept=".jpg,.jpeg,.png,.pdf"
                   onChange={handleFileChange}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                 />
@@ -157,7 +180,7 @@ const CreateRequest = () => {
                 </div>
                 <h4 className="font-bold text-slate-800">Upload documents</h4>
                 <p className="text-sm font-medium text-slate-500 mt-1 max-w-xs">
-                   Drag & drop or click to choose files. JPG, PNG, PDF, Word (Max 5MB per file).
+                   Drag & drop or click to choose files. PDF, JPG, or PNG (Max 5MB).
                 </p>
               </div>
 
