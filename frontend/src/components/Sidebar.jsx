@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
 import { 
   LayoutDashboard, PlusCircle, List, 
@@ -32,6 +33,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     {
       title: 'Account',
       items: [
+        { label: 'Support', path: '/support', icon: HelpCircle },
         { label: 'Settings', path: '/settings', icon: Settings },
         { label: 'Logout', action: logout, icon: LogOut, isAction: true }
       ]
@@ -129,17 +131,30 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
                   if (isAdmin) {
                     // Admin Minimal Design
+                    const handleClick = (e) => {
+                      if (item.isPlaceholder) {
+                        e.preventDefault();
+                        toast('Service portal maintenance in progress. This feature is currently inactive.', {
+                          icon: '🛠️',
+                          style: { borderRadius: '10px', background: '#334155', color: '#fff', fontSize: '12px', fontWeight: 'bold' }
+                        });
+                      } else if (window.innerWidth < 1024) {
+                        toggleSidebar();
+                      }
+                    };
+
                     return (
                       <NavLink
                         key={i}
                         to={item.path}
-                        onClick={() => window.innerWidth < 1024 && toggleSidebar()}
+                        onClick={handleClick}
                         className={`
                           relative flex items-center gap-3.5 px-4 py-2.5 transition-all duration-300 text-sm font-bold group
                           ${isActive 
                             ? 'text-white' 
                             : 'text-slate-500 hover:text-slate-300'
                           }
+                          ${item.isPlaceholder ? 'cursor-not-allowed' : ''}
                         `}
                       >
                         {isActive && (

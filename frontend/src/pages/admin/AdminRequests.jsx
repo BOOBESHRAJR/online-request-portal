@@ -79,84 +79,109 @@ const AdminRequests = () => {
   );
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-500 pb-10">
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6 animate-in fade-in slide-in-from-bottom-5 duration-500 pb-10"
+    >
       
       {/* Search Header */}
-      <div className="bg-[#0f172a] rounded-[2rem] p-8 border border-white/5 shadow-2xl relative overflow-hidden group">
-         <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-700 group-hover:scale-125"></div>
+      <div className="bg-[#0f172a] rounded-[2.5rem] p-10 border border-white/5 shadow-2xl relative overflow-hidden group">
+         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -mr-40 -mt-40 transition-transform duration-1000 group-hover:scale-110"></div>
          
-         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-8">
+         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-10">
             <div>
-               <h1 className="text-3xl font-black text-white tracking-tight leading-none">All Requests Queue</h1>
-               <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
-                  <Database size={14} className="text-blue-500" /> Administrative Storage Control
+               <h1 className="text-4xl font-black text-white tracking-tight leading-none">Global Request Queue</h1>
+               <p className="text-slate-400 text-[11px] font-black uppercase tracking-[0.25em] mt-3 flex items-center gap-2">
+                  <Database size={14} className="text-blue-500 animate-pulse" /> 
+                  Unified Administrative Intel Repository
                </p>
             </div>
-            <div className="flex items-center gap-3 bg-white/5 p-2 rounded-2xl border border-white/5 backdrop-blur-md">
-               <div className="px-5 py-2">
-                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-1">Queue Size</p>
-                  <p className="text-xl font-black text-white leading-none">{filteredRequests.length} Items</p>
+            <div className="flex items-center gap-4 bg-white/5 p-3 rounded-3xl border border-white/10 backdrop-blur-xl shadow-inner">
+               <div className="px-6 py-2 border-r border-white/10">
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-2">Total Volume</p>
+                  <p className="text-2xl font-black text-white leading-none tracking-tighter">{filteredRequests.length}</p>
+               </div>
+               <div className="pr-6">
+                  <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest leading-none mb-2">Live Status</p>
+                  <div className="flex items-center gap-2 text-xs font-black text-emerald-400 leading-none">
+                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
+                     Healthy
+                  </div>
                </div>
             </div>
          </div>
 
          {/* Filter Controls Redesign */}
-         <div className="relative z-10 flex flex-col lg:flex-row gap-4 bg-white p-3 rounded-[1.5rem] shadow-xl">
-            <div className="flex-1 relative">
-               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+         <div className="relative z-10 flex flex-col lg:flex-row gap-5 bg-white p-4 rounded-[2rem] shadow-2xl">
+            <div className="flex-1 relative group">
+               <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors" size={20} />
                <input 
                   type="text" 
-                  placeholder="Search by title, requester or ID..."
-                  className="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl outline-none focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-bold text-slate-900"
+                  placeholder="Query by title, requester identity or system ID..."
+                  className="w-full pl-14 pr-6 py-4 bg-slate-50 border-none rounded-2xl outline-none focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-bold text-slate-900"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                />
             </div>
-            <div className="flex flex-wrap gap-3">
-               <select 
-                  className="px-4 py-3 bg-slate-50 border-none rounded-xl text-xs font-black uppercase tracking-widest text-slate-600 outline-none focus:bg-white cursor-pointer"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-               >
-                  <option value="all">Status Filters</option>
-                  <option value="pending">Pending Only</option>
-                  <option value="approved">Approved Samples</option>
-                  <option value="rejected">Rejected Items</option>
-               </select>
+            <div className="flex flex-wrap gap-4">
+               <div className="relative">
+                  <select 
+                     className="appearance-none px-6 py-4 bg-slate-50 border-none rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-600 outline-none focus:bg-white focus:ring-4 focus:ring-blue-500/5 cursor-pointer pr-12 min-w-[180px] shadow-sm transition-all"
+                     value={statusFilter}
+                     onChange={(e) => setStatusFilter(e.target.value)}
+                  >
+                     <option value="all">Any Status</option>
+                     <option value="pending">Pending Review</option>
+                     <option value="approved">Approved Assets</option>
+                     <option value="rejected">Rejected Entries</option>
+                  </select>
+                  <Filter size={14} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
+               </div>
 
-               <select 
-                  className="px-4 py-3 bg-slate-50 border-none rounded-xl text-xs font-black uppercase tracking-widest text-slate-600 outline-none focus:bg-white cursor-pointer"
-                  value={categoryFilter}
-                  onChange={(e) => setCategoryFilter(e.target.value)}
-               >
-                  <option value="all">All Categories</option>
-                  <option value="General Information">General Info</option>
-                  <option value="Technical Support">Technical</option>
-                  <option value="Billing & Payments">Financial</option>
-                  <option value="Document Retrieval">Auditing</option>
-                  <option value="Other">Custom Type</option>
-               </select>
+               <div className="relative">
+                  <select 
+                     className="appearance-none px-6 py-4 bg-slate-50 border-none rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-600 outline-none focus:bg-white focus:ring-4 focus:ring-blue-500/5 cursor-pointer pr-12 min-w-[180px] shadow-sm transition-all"
+                     value={categoryFilter}
+                     onChange={(e) => setCategoryFilter(e.target.value)}
+                  >
+                     <option value="all">All Channels</option>
+                     <option value="General Information">General Insight</option>
+                     <option value="Technical Support">Tech Protocol</option>
+                     <option value="Billing & Payments">Financial Log</option>
+                     <option value="Document Retrieval">Data Audit</option>
+                     <option value="Other">Standard Type</option>
+                  </select>
+                  <Layers size={14} className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 pointer-events-none" />
+               </div>
             </div>
          </div>
       </div>
 
       {/* Main Stream Queue */}
-      <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto min-h-[400px]">
-           <table className="w-full text-left">
+      <div className="bg-white rounded-[3rem] border border-slate-200 shadow-sm overflow-hidden group/container">
+        <div className="overflow-x-auto min-h-[500px]">
+           <table className="w-full text-left border-collapse">
               <thead className="bg-[#fcfdff] border-b border-slate-100">
-                <tr className="text-slate-400 text-[9px] font-black uppercase tracking-widest">
-                  <th className="px-6 py-5">Identity Control</th>
-                  <th className="px-6 py-5">Request Documentation</th>
-                  <th className="px-6 py-5">Category</th>
-                  <th className="px-6 py-5">Timeline</th>
-                  <th className="px-6 py-5">Status</th>
-                  <th className="px-6 py-5 text-right pr-10">Administrative Actions</th>
+                <tr className="text-slate-400 text-[10px] font-black uppercase tracking-[0.25em]">
+                  <th className="px-8 py-6">Identity Key</th>
+                  <th className="px-8 py-6">Documentation Context</th>
+                  <th className="px-8 py-6">Classification</th>
+                  <th className="px-8 py-6">Chronology</th>
+                  <th className="px-8 py-6">State</th>
+                  <th className="px-8 py-6 text-right pr-12">Administrative Logic</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {filteredRequests.map((req) => (
-                  <tr key={req._id} className="hover:bg-slate-50 transition-all group animate-in fade-in duration-300 border-l-[4px] border-l-transparent hover:border-l-blue-600">
+                {filteredRequests.map((req, i) => (
+                  <motion.tr 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    key={req._id} 
+                    className="hover:bg-blue-50/30 transition-all group border-l-[6px] border-l-transparent hover:border-l-blue-600"
+                  >
                     <td className="px-6 py-5">
                        <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-extrabold text-xs shadow-sm group-hover:scale-110 transition-transform">
@@ -226,13 +251,13 @@ const AdminRequests = () => {
                         </button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
            </table>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

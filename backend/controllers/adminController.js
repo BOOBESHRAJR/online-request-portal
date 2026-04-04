@@ -21,6 +21,7 @@ const getDashboardStats = async (req, res) => {
         const pending = await Request.countDocuments({ ...baseQuery, status: 'pending' });
         const approved = await Request.countDocuments({ ...baseQuery, status: 'approved' });
         const rejected = await Request.countDocuments({ ...baseQuery, status: 'rejected' });
+        const userCount = await User.countDocuments({ role: 'user' });
         
         // Count by category
         const categoryCounts = await Request.aggregate([
@@ -28,7 +29,26 @@ const getDashboardStats = async (req, res) => {
             { $group: { _id: "$category", count: { $sum: 1 } } }
         ]);
 
-        res.json({ total, pending, approved, rejected, categoryCounts });
+        // Timeline Trend (Last 7 Days)
+        const timelineTrend = [];
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const startOfDay = new Date(date.setHours(0,0,0,0));
+            const endOfDay = new Date(date.setHours(23,59,59,999));
+            
+            const count = await Request.countDocuments({
+                ...baseQuery,
+                createdAt: { $gte: startOfDay, $lte: endOfDay }
+            });
+            
+            timelineTrend.push({
+                date: startOfDay.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+                requests: count
+            });
+        }
+
+        res.json({ total, pending, approved, rejected, userCount, categoryCounts, timelineTrend });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -87,10 +107,33 @@ const deleteRequest = async (req, res) => {
     }
 };
 
+const deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.params.id);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const updateUserRole = async (req, res) => {
+    try {
+        const { role } = req.body;
+        const user = await User.findByIdAndUpdate(req.params.id, { role }, { new: true });
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getAllRequests,
     getDashboardStats,
     updateRequestStatus,
     getAllUsers,
-    deleteRequest
+    deleteRequest,
+    deleteUser,
+    updateUserRole
 };
