@@ -113,11 +113,35 @@ const updateRequest = async (req, res) => {
     }
 };
 
+const deleteRequest = async (req, res) => {
+    try {
+        const request = await Request.findById(req.params.id);
+
+        if (!request) {
+            return res.status(404).json({ message: 'Request not found' });
+        }
+
+        if (request.user.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+
+        if (request.status !== 'pending') {
+            return res.status(400).json({ message: 'Cannot delete request after it has been processed' });
+        }
+
+        await Request.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Request deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     createRequest,
     getMyRequests,
     getRequestById,
     getUserStats,
     getDocument,
-    updateRequest
+    updateRequest,
+    deleteRequest
 };

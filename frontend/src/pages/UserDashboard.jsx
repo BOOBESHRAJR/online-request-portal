@@ -66,6 +66,19 @@ const UserDashboard = () => {
     }
   };
 
+  const handleDelete = async (request_id) => {
+    if (!window.confirm("Are you sure you want to delete this request? This cannot be undone.")) return;
+    try {
+      await api.delete(`/requests/${request_id}`);
+      toast.success('Request deleted successfully.');
+      setRequests(requests.filter(r => r._id !== request_id));
+      const statsRes = await api.get('/requests/stats');
+      setStats(statsRes.data);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Delete failed.');
+    }
+  };
+
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[60vh]">
       <Loader2 className="animate-spin text-blue-600 mb-4" size={32} />
@@ -256,7 +269,7 @@ const UserDashboard = () => {
                           <button 
                             className="inline-flex items-center justify-center w-10 h-10 bg-slate-50 hover:bg-rose-500 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100 active:scale-90"
                             title="Delete Request"
-                            onClick={() => toast.error("Delete functionality not enabled yet.")}
+                            onClick={() => handleDelete(req._id)}
                           >
                             <Trash2 size={16} />
                           </button>
