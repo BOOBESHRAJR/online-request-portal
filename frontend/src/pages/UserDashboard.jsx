@@ -6,12 +6,8 @@ import api from '../services/api';
 import { 
   FileText, CheckCircle2, Clock, XCircle, 
   Plus, Loader2, ChevronRight, Inbox,
-  Calendar, Search, Filter, Pencil, Trash2,
-  PieChart as PieChartIcon
+  Calendar, Search, Filter, Pencil, Trash2
 } from 'lucide-react';
-import { 
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip
-} from 'recharts';
 import toast from 'react-hot-toast';
 
 const UserDashboard = () => {
@@ -137,89 +133,6 @@ const UserDashboard = () => {
         ))}
       </div>
 
-      {/* Analytics: Status Distribution */}
-      {stats.total > 0 && (
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all animate-in slide-in-from-bottom-4 duration-700 delay-75">
-          <div className="flex items-center gap-3 mb-8">
-             <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
-                <PieChartIcon size={20} />
-             </div>
-             <div>
-                <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Status Distribution</h3>
-                <p className="text-[10px] font-bold text-slate-400">Visual percentage of your request status</p>
-             </div>
-          </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={[
-                    { name: 'Pending', value: stats.pending },
-                    { name: 'Approved', value: stats.approved },
-                    { name: 'Rejected', value: stats.rejected }
-                  ].filter(d => d.value > 0)}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={8}
-                  dataKey="value"
-                >
-                  <Cell fill="#f59e0b" /> {/* Pending - Yellow */}
-                  <Cell fill="#10b981" /> {/* Approved - Green */}
-                  <Cell fill="#ef4444" /> {/* Rejected - Red */}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                  itemStyle={{ fontWeight: 'bold' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
-
-      {/* Analytics: Status Distribution */}
-      {stats.total > 0 && (
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm hover:shadow-md transition-all animate-in slide-in-from-bottom-4 duration-700 delay-75">
-          <div className="flex items-center gap-3 mb-8">
-             <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
-                <PieChartIcon size={20} />
-             </div>
-             <div>
-                <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Status Distribution</h3>
-                <p className="text-[10px] font-bold text-slate-400">Visual percentage of your request status</p>
-             </div>
-          </div>
-          <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={[
-                    { name: 'Pending', value: stats.pending },
-                    { name: 'Approved', value: stats.approved },
-                    { name: 'Rejected', value: stats.rejected }
-                  ].filter(d => d.value > 0)}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={80}
-                  paddingAngle={8}
-                  dataKey="value"
-                >
-                  <Cell fill="#f59e0b" /> {/* Pending - Yellow */}
-                  <Cell fill="#10b981" /> {/* Approved - Green */}
-                  <Cell fill="#ef4444" /> {/* Rejected - Red */}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                  itemStyle={{ fontWeight: 'bold' }}
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      )}
 
       {/* Table Section */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden animate-in slide-in-from-bottom-6 duration-700 delay-100">
